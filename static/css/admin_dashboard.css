@@ -1,0 +1,273 @@
+/* --- Root Variables for Light Pink Glassmorphism Theme --- */
+:root {
+    --primary-pink: #f472b6;         /* A vibrant, primary pink */
+    --light-pink-glow: #fbcfe8;      /* A very soft pink for glows and highlights */
+    --body-bg: #1a1b26;              /* A deep, dark background to make pinks pop */
+    --text-primary: #ffffff;         /* Primary text color (white) */
+    --text-secondary: rgba(235, 235, 245, 0.8); /* Muted text for subtitles and placeholders */
+    --glass-bg: rgba(244, 114, 182, 0.1);   /* Glass panel background with a subtle pink tint */
+    --glass-border: rgba(244, 114, 182, 0.2); /* Border for the glass panel */
+    --soft-shadow: rgba(0, 0, 0, 0.25);      /* A neutral soft shadow for depth */
+}
+
+/* --- General Setup & Body --- */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background: var(--body-bg);
+    color: var(--text-primary);
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    padding: 2rem;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+body.is-loaded { opacity: 1; }
+body.is-leaving { opacity: 0; }
+
+/* --- Animated Background --- */
+.background-shapes {
+    position: fixed; /* Fixed so it doesn't scroll */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.7;
+}
+.shape1 {
+    width: 400px; height: 400px;
+    background: linear-gradient(135deg, var(--primary-pink), var(--light-pink-glow));
+    top: -100px; left: -150px;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 500px; height: 500px;
+    background: linear-gradient(135deg, var(--light-pink-glow), #a78bfa); /* A soft violet for a nice contrast */
+    bottom: -150px; right: -200px;
+    animation: move 25s infinite alternate-reverse ease-in-out;
+}
+@keyframes move {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(100px, 50px) rotate(180deg); }
+}
+
+/* --- Dashboard Header --- */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 2rem;
+}
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.dashboard-header p {
+    margin: 0.25rem 0 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* --- Main Dashboard Grid Layout --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* --- General Glass Panel Style --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 var(--soft-shadow);
+    padding: 2rem;
+    transition: transform 0.2s ease-out;
+}
+.glass-panel h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* --- File Upload Form --- */
+.upload-instructions {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+.upload-instructions code {
+    background: var(--primary-pink);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+.file-input-wrapper {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+.file-input-wrapper input[type="file"] {
+    display: none; /* Hide the actual input */
+}
+.file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0,0,0,0.2);
+    border: 2px dashed var(--glass-border);
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.file-input-label:hover {
+    border-color: var(--primary-pink);
+    color: var(--primary-pink);
+}
+#file-name {
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.teacher-select {
+    width: 100%;
+    padding: 14px 20px;
+    background: rgba(0,0,0,0.2);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-family: inherit;
+}
+/* --- Student Table Styling --- */
+.table-container {
+    max-height: 400px; /* Or any height you prefer */
+    overflow-y: auto; /* Adds a scrollbar if content exceeds height */
+}
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-primary);
+}
+.student-table thead {
+    position: sticky;
+    top: 0;
+    background: var(--glass-bg); /* Match panel bg */
+    backdrop-filter: blur(10px);
+}
+.student-table th {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1.5px solid var(--glass-border);
+    font-weight: 600;
+}
+.student-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+.student-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.student-table tbody tr:hover {
+    background: rgba(255,255,255,0.05);
+}
+.no-data-message {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+}
+
+/* --- General Button Styles --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.btn-primary {
+    background: var(--primary-pink);
+    color: white;
+    width: 100%; /* Make upload button full width */
+}
+.btn-primary:hover {
+    background: #f68ac1; /* Slightly lighter pink on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px 5px rgba(244, 114, 182, 0.6);
+}
+.btn-secondary {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+}
+.btn-secondary:hover {
+    background: var(--primary-pink);
+    color: white;
+    border-color: var(--primary-pink);
+}
+
+/* --- Flashed Messages --- */
+.flashed-messages {
+    grid-column: 1 / -1; /* Span across both columns */
+}
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    border: 1px solid;
+    text-align: center;
+}
+.alert-danger, .alert-warning {
+    background-color: rgba(255, 59, 48, 0.15);
+    color: #ff453a;
+    border-color: rgba(255, 59, 48, 0.3);
+}
+.alert-success {
+    background-color: rgba(52, 199, 89, 0.15);
+    color: #32d74b;
+    border-color: rgba(52, 199, 89, 0.3);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}

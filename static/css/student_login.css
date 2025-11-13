@@ -1,0 +1,283 @@
+/* --- Root Variables for Student (Yellowish-Orange) Theme --- */
+:root {
+    --primary-yellow: #ff9500; /* A vibrant, energetic orange */
+    --light-yellow-glow: #ffcc00; /* A bright yellow for glows and highlights */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(235, 235, 245, 0.7);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --soft-shadow: rgba(0, 0, 0, 0.25);
+    --error-red: #ff453a;
+}
+
+/* --- General Setup & Body with Transition Fix --- */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background: #1c1c1e; /* A dark, slightly warm background to complement orange */
+    color: var(--text-primary);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    /* --- Transition Fix --- */
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+body.is-loaded {
+    opacity: 1;
+}
+body.is-leaving {
+    opacity: 0;
+}
+
+/* --- Animated Liquid Background --- */
+.background-shapes {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.6;
+}
+.shape1 {
+    width: 400px; height: 400px;
+    background: linear-gradient(135deg, var(--primary-yellow), var(--light-yellow-glow));
+    top: -100px; left: -150px;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 500px; height: 500px;
+    background: linear-gradient(135deg, var(--light-yellow-glow), #ff5e00);
+    bottom: -150px; right: -200px;
+    animation: move 25s infinite alternate-reverse ease-in-out;
+}
+@keyframes move {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(100px, 50px) rotate(180deg); }
+}
+
+/* --- Main Content Structure --- */
+.container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- Glass Panel Style --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px 0 var(--soft-shadow);
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* --- Typography and Content Styling --- */
+.logo i {
+    font-size: 48px;
+    color: var(--light-yellow-glow);
+    text-shadow: 0 0 20px rgba(255, 204, 0, 0.7);
+    margin-bottom: 16px;
+}
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+.subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+
+/* --- General Form Styles --- */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    margin-top: 24px;
+}
+
+/* --- Glassy Input Fields --- */
+.form-group {
+    position: relative;
+}
+.form-group input {
+    width: 100%;
+    padding: 14px 20px 14px 50px;
+    background: var(--glass-bg);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+.form-group input::placeholder { color: var(--text-secondary); opacity: 0.8; }
+.form-group input:focus {
+    outline: none;
+    border-color: var(--light-yellow-glow);
+    box-shadow: 0 0 15px 2px rgba(255, 204, 0, 0.5);
+}
+.form-group > i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+    pointer-events: none;
+}
+.form-group input:focus ~ i { 
+    color: var(--light-yellow-glow); 
+}
+
+/* --- Fix for Browser Autofill Background --- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--text-primary) !important;
+    background-color: var(--glass-bg) !important;
+    box-shadow: 0 0 0 30px var(--glass-bg) inset !important;
+    -webkit-box-shadow: 0 0 0 30px var(--glass-bg) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* --- Password Toggle Button --- */
+.toggle-password {
+    position: absolute;
+    right: 20px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    color: var(--text-secondary);
+    cursor: pointer; padding: 0;
+}
+
+/* --- Glowing Button Styles --- */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.btn-primary {
+    background: var(--primary-yellow);
+    color: white;
+}
+.btn-primary:hover {
+    background: var(--light-yellow-glow);
+    color: #1c1c1e;
+    box-shadow: 0 0 30px 8px rgba(255, 149, 0, 0.6);
+}
+
+/* --- Form Links & Footer --- */
+.form-footer {
+    margin-top: 24px;
+}
+.form-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 14px;
+}
+.form-link:hover {
+    color: var(--light-yellow-glow);
+    text-decoration: underline;
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* --- Flashed Messages --- */
+.alert {
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid;
+    width: 100%;
+    box-sizing: border-box;
+}
+.alert-danger { /* Matched 'danger' used in other templates */
+    background-color: rgba(255, 69, 58, 0.15);
+    color: var(--error-red);
+    border-color: rgba(255, 69, 58, 0.3);
+}
+
+/* --- Google Login Button --- */
+
+.google-login-button {
+    /* Layout */
+    display: inline-flex;  /* Use flexbox to align logo and text */
+    align-items: center;   /* Vertically center items */
+    justify-content: center; /* Horizontally center items */
+    
+    /* Box Model */
+    width: 100%;           /* Make it full-width like the "Sign In" button */
+    padding: 10px 15px;
+    margin-top: 15px;      /* Add space above it */
+    box-sizing: border-box; /* Make width include padding */
+    
+    /* Style */
+    background-color: #ffffff; /* Google's standard white */
+    border: 1px solid #d2d2d2; /* Light grey border */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    
+    /* Text */
+    color: #444444;        /* Google's grey text color */
+    text-decoration: none; /* Remove underline */
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif; /* Google's font (optional, but nice) */
+
+    /* Interaction */
+    transition: all 0.2s ease-in-out;
+}
+
+/* Style for the logo inside the button */
+.google-login-button img {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px; /* Space between logo and text */
+}
+
+/* Hover effect */
+.google-login-button:hover {
+    background-color: #f7f7f7; /* Slightly darker white */
+    border-color: #c0c0c0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}

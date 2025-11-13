@@ -1,0 +1,40 @@
+# Python Virtual Environment
+venv/
+
+# Secret keys
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Uploaded files
+uploads/
+
+# --- NEWLY ADDED ---
+
+# Database file
+teachers.db
+*.db
+*.sqlite3
+
+# VS Code editor settings
+.vscode/
+
+# Sensitive data files
+Excel_sheets/
+*.xlsx
+*.csv
+
+# Generated output files
+Reports/
+
+uploads/
+
+Testing/
+
+batch_processor.py
+
+
+Model/
+content/

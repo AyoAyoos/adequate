@@ -1,0 +1,53 @@
+Yes, you are missing a few critical libraries that your app needs to run.
+
+Your app will crash on deployment without these.
+
+1.  **`supabase`**: Your `app.py` file uses this to connect to your database.
+2.  **`gunicorn`**: This is the production-level server that will actually run your Flask app on the deployment platform.
+3.  **`openpyxl`**: You use `pandas.read_excel()` in your app to read `.xlsx` files. Pandas requires this library to do that.
+
+-----
+
+### Your Corrected `requirements.txt`
+
+Here is the complete file you should use. Just copy and paste this to replace the content in your `requirements.txt`.
+
+```
+# Core LangChain ecosystem
+langchain==0.3.27
+langchain-core==0.3.75
+langchain-groq
+langchain-community
+langchain-huggingface
+
+# Machine Learning & Transformers
+torch
+transformers
+faiss-cpu
+
+# Data & Utilities
+pandas
+numpy
+python-dotenv
+
+# Web Framework (Flask stack)
+flask
+werkzeug
+
+# PDF processing
+pypdf
+
+# Extra utilities
+scikit-learn
+
+# --- ADDED LIBRARIES ---
+
+# Supabase client
+supabase
+
+# Production server
+gunicorn
+
+# For reading .xlsx files
+openpyxl
+```

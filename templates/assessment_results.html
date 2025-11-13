@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Results - AD!QUATE</title>
+
+    <!-- Dedicated Stylesheet for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment_results.css') }}">
+    
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js library for the pie chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Dedicated JavaScript for this page -->
+    <script src="{{ url_for('static', filename='js/assessment_results.js') }}" defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container">
+        <!-- Main Glass Panel containing the grid -->
+        <div class="glass-panel">
+            <div class="results-header">
+                <h1>Your Assessment Results</h1>
+                <p class="subtitle">Here is your AQ trait profile. Now, select your top skills to generate your final career report.</p>
+            </div>
+
+            <form action="{{ url_for('generate_report') }}" method="POST">
+                <div class="content-grid">
+                    
+                    <!-- Left Column: The Pie Chart -->
+                    <div class="card chart-card">
+                        <h2>Your AQ Trait Profile</h2>
+                        <div class="chart-container">
+                            <canvas
+    id="aqChart"
+    data-scores='{{ scores  | tojson | safe }}'
+></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Skill Selection -->
+                    <div class="card skills-card">
+                        <h2>Step 2: Select Your Top Skills</h2>
+                        <p class="instructions">Choose the skills you are most confident in.</p>
+                        
+                        <div class="skills-grid">
+                            <!-- Jinja2 loop to dynamically create a checkbox for each skill -->
+                            {% for skill in all_skills %}
+                            <div>
+                                <input type="checkbox" name="skills" value="{{ skill }}" id="skill-{{ loop.index }}">
+                                <label for="skill-{{ loop.index }}">{{ skill }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-magic"></i>
+                            Generate My Career Report
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

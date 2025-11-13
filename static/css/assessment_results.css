@@ -1,0 +1,219 @@
+/* --- Root Variables for Student Theming --- */
+:root {
+    --primary-orange: #ff9500;
+    --light-yellow: #ffcc00;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(235, 235, 245, 0.7);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --soft-shadow: rgba(0, 0, 0, 0.25);
+    --dark-bg: #2c2c2e;
+}
+
+/* --- General Setup & Body --- */
+html {
+    background-color: #1c1c1e;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background: var(--dark-bg);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+body.is-loaded { opacity: 1; }
+body.is-leaving { opacity: 0; }
+
+/* --- Animated Liquid Background --- */
+.background-shapes {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.6;
+}
+.shape1 {
+    width: 450px; height: 450px;
+    background: linear-gradient(135deg, var(--primary-orange), var(--light-yellow));
+    top: -100px; left: -150px;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 500px; height: 500px;
+    background: linear-gradient(135deg, var(--light-yellow), #ff5e00);
+    bottom: -150px; right: -200px;
+    animation: move 25s infinite alternate-reverse ease-in-out;
+}
+@keyframes move {
+    from { transform: translate(0, 0) rotate(0deg) scale(1); }
+    to { transform: translate(100px, 50px) rotate(180deg) scale(1.1); }
+}
+
+/* --- Main Content Container --- */
+.container {
+    width: 100%;
+    max-width: 1100px;
+}
+
+/* --- Glass Panel Style --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px 0 var(--soft-shadow);
+    padding: 30px 40px;
+    
+    opacity: 0;
+    animation: float-in 0.8s 0.2s ease-out forwards;
+}
+@keyframes float-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Results Page Specific Styles --- */
+.results-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.results-header h1 {
+    font-size: 28px;
+    margin: 0;
+}
+.results-header .subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+    align-items: stretch;
+}
+
+.card {
+    background: rgba(0,0,0,0.15);
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+/* Chart Card */
+.chart-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 300px;
+}
+#aqChart {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Skills Card */
+.skills-card .instructions {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+}
+.skills-grid label {
+    background: rgba(0,0,0,0.2);
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: 1.5px solid transparent;
+    font-size: 14px;
+}
+.skills-grid label:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: var(--light-yellow);
+}
+.skills-grid input:checked + label {
+    background: var(--primary-orange);
+    color: white;
+    font-weight: 600;
+}
+.skills-grid input[type="checkbox"] {
+    display: none;
+}
+
+/* --- CUSTOM SCROLLBAR --- */
+.skills-grid::-webkit-scrollbar {
+  width: 8px;
+}
+.skills-grid::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+.skills-grid::-webkit-scrollbar-thumb {
+  background: var(--primary-orange);
+  border-radius: 10px;
+}
+.skills-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--light-yellow);
+}
+
+/* Submit Button */
+.btn {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    gap: 12px; padding: 14px 28px;
+    border: none; border-radius: 16px;
+    font-weight: 600; font-size: 16px;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: 25px; /* Pushes button to bottom */
+    width: 100%;
+}
+.btn i { font-size: 18px; }
+.btn-primary {
+    background: var(--primary-orange);
+    color: white;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px 8px rgba(255, 149, 0, 0.6);
+}

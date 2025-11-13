@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Results - AD!QUATE</title>
+
+    <!-- Dedicated CSS for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/results.css') }}">
+    
+    <!-- Icons and Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Dedicated JavaScript for this page -->
+    <script src="{{ url_for('static', filename='js/results.js') }}" defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container">
+        <!-- Single Glass Panel for the Results -->
+        <div class="glass-panel panel-main">
+            <div class="results-header">
+                <i class="fas fa-poll-h logo-icon"></i>
+                <h1>Classification Results</h1>
+                <p class="subtitle">Predicted Bloom's Taxonomy levels for the uploaded questions.</p>
+            </div>
+            
+            <!-- Filter Controls -->
+            <div class="filter-container">
+                <button class="filter-btn active" data-level="all">All</button>
+                <button class="filter-btn" data-level="L1">L1</button>
+                <button class="filter-btn" data-level="L2">L2</button>
+                <button class="filter-btn" data-level="L3">L3</button>
+                <button class="filter-btn" data-level="L4">L4</button>
+                <button class="filter-btn" data-level="L5">L5</button>
+                <button class="filter-btn" data-level="L6">L6</button>
+            </div>
+
+            <!-- Results List -->
+            <div class="results-list">
+                {% if results %}
+                    {% for item in results %}
+                    <div class="result-card" data-level="{{ item.predicted_level }}">
+                        <p class="question-text">{{ item.question }}</p>
+                        <div class="level-badge level-{{ item.predicted_level }}">{{ item.predicted_level }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-results">No results to display.</p>
+                {% endif %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-footer">
+                <button onclick="window.print()" class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    Download as PDF
+                </button>
+                <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Classify Another File
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,236 @@
+/* --- Root Variables for Theming --- */
+:root {
+    --primary-blue: #007aff;
+    --light-blue: #5ac8fa;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(235, 235, 245, 0.7);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --soft-shadow: rgba(0, 0, 0, 0.25);
+}
+
+/* --- General Setup & Body --- */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background: #1d2b3a;
+    color: var(--text-primary);
+    display: grid;
+    place-items: center;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-y: auto; /* Allow vertical scroll if form is long */
+    padding: 40px 20px; /* Add some padding for smaller screens */
+    box-sizing: border-box;
+    transition: opacity 0.5s ease-out;
+}
+body.is-leaving {
+    opacity: 0;
+}
+
+/* --- Animated Liquid Background --- */
+.background-shapes {
+    position: fixed; /* Use fixed to keep it in place on scroll */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.7;
+}
+.shape1 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+    top: -100px;
+    left: -150px;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, var(--light-blue), #ffffff);
+    bottom: -150px;
+    right: -200px;
+    animation: move 25s infinite alternate-reverse ease-in-out;
+}
+@keyframes move {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(100px, 50px) rotate(180deg); }
+}
+
+/* --- Main Content Container --- */
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* --- Glass Panel Style --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px 0 var(--soft-shadow);
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 420px; /* Slightly wider for registration form */
+    opacity: 0;
+    animation: float-in 0.8s ease-out 0.2s forwards;
+    transition: transform 0.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+@keyframes float-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Typography & Content --- */
+.logo i {
+    font-size: 48px;
+    color: var(--light-blue);
+    margin-bottom: 16px;
+}
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+}
+.subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+.btn-primary {
+    background: var(--primary-blue);
+    color: white;
+}
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 30px 8px rgba(0, 122, 255, 0.6);
+}
+
+/* --- Registration Form Styles --- */
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Tighter gap for more fields */
+    width: 100%;
+    margin-top: 24px;
+}
+.form-group {
+    position: relative;
+}
+.form-group input {
+    width: 100%;
+    padding: 14px 20px 14px 50px;
+    background: var(--glass-bg);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+.form-group input::placeholder { color: var(--text-secondary); opacity: 0.8; }
+.form-group input:focus {
+    outline: none;
+    border-color: var(--light-blue);
+    box-shadow: 0 0 15px 2px rgba(90, 200, 250, 0.5);
+    
+}
+.form-group > i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+    pointer-events: none;
+}
+.form-group input:focus ~ i {
+    color: var(--light-blue);
+
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--text-primary) !important;
+    background-color: var(--glass-bg) !important;
+    box-shadow: 0 0 0 30px var(--glass-bg) inset !important;
+    -webkit-box-shadow: 0 0 0 30px var(--glass-bg) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+/* --- Form Links & Footer --- */
+.form-footer {
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+.form-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 600;
+}
+.form-link:hover {
+    color: var(--light-blue);
+    text-decoration: underline;
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+.alert {
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid;
+}
+.alert-error {
+    background-color: rgba(255, 59, 48, 0.15);
+    color: #ff453a;
+    border-color: rgba(255, 59, 48, 0.3);
+}
+.alert-success {
+    background-color: rgba(52, 199, 89, 0.15);
+    color: #32d74b;
+    border-color: rgba(52, 199, 89, 0.3);
+}

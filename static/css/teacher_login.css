@@ -1,0 +1,326 @@
+/* --- Root Variables for Theming --- */
+:root {
+    --primary-blue: #007aff;
+    --light-blue: #5ac8fa;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(235, 235, 245, 0.7);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --soft-shadow: rgba(0, 0, 0, 0.25);
+}
+
+/* --- General Setup & Body --- */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background: #1d2b3a;
+    color: var(--text-primary);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    transition: opacity 0.5s ease-out; /* For page transitions */
+}
+body.is-leaving {
+    opacity: 0;
+}
+
+/* --- Animated Liquid Background --- */
+.background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.7;
+}
+.shape1 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+    top: -100px;
+    left: -150px;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, var(--light-blue), #ffffff);
+    bottom: -150px;
+    right: -200px;
+    animation: move 25s infinite alternate-reverse ease-in-out;
+}
+@keyframes move {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(100px, 50px) rotate(180deg); }
+}
+
+/* --- Main Content Container --- */
+.container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* --- Glass Panel Style --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px 0 var(--soft-shadow);
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 400px;
+    opacity: 0;
+    animation: float-in 0.8s ease-out 0.2s forwards; /* Added delay directly */
+    transition: transform 0.2s ease-out;
+}
+@keyframes float-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Typography & Content --- */
+.logo i {
+    font-size: 48px;
+    color: var(--light-blue);
+    text-shadow: 0 0 20px rgba(90, 200, 250, 0.7);
+    margin-bottom: 16px;
+}
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+.subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+.btn-primary {
+    background: var(--primary-blue);
+    color: white;
+}
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 30px 8px rgba(0, 122, 255, 0.6);
+}
+
+/* --- Form Styles --- */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    margin-top: 24px;
+}
+.form-group {
+    position: relative;
+}
+.form-group input {
+    width: 100%;
+    padding: 14px 20px 14px 50px;
+    background: var(--glass-bg);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+.form-group input::placeholder { color: var(--text-secondary); opacity: 0.8; }
+.form-group input:focus {
+    outline: none;
+    border-color: var(--light-blue);
+    box-shadow: 0 0 15px 2px rgba(90, 200, 250, 0.5);
+}
+.form-group > i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+    pointer-events: none; /* Make icon non-interactive */
+}
+.form-group input:focus ~ i { color: var(--light-blue); }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--text-primary) !important;
+    background-color: var(--glass-bg) !important;
+    box-shadow: 0 0 0 30px var(--glass-bg) inset !important;
+    -webkit-box-shadow: 0 0 0 30px var(--glass-bg) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+}
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+.remember-me input[type="checkbox"] { display: none; }
+.checkmark {
+    width: 18px;
+    height: 18px;
+    background: var(--glass-bg);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 6px;
+    display: inline-block;
+    position: relative;
+    transition: all 0.3s ease;
+}
+.remember-me input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-blue);
+    border-color: var(--light-blue);
+}
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+.remember-me input[type="checkbox"]:checked + .checkmark:after { display: block; }
+.form-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.form-link:hover {
+    color: var(--light-blue);
+    text-decoration: underline;
+}
+.form-footer {
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+.alert {
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid;
+}
+.alert-error {
+    background-color: rgba(255, 59, 48, 0.15);
+    color: #ff453a;
+    border-color: rgba(255, 59, 48, 0.3);
+}
+.alert-success {
+    background-color: rgba(52, 199, 89, 0.15);
+    color: #32d74b;
+    border-color: rgba(52, 199, 89, 0.3);
+}
+
+
+/* --- Google Login Button --- */
+
+.google-login-button {
+    /* Layout */
+    display: inline-flex;  /* Use flexbox to align logo and text */
+    align-items: center;   /* Vertically center items */
+    justify-content: center; /* Horizontally center items */
+    
+    /* Box Model */
+    width: 100%;           /* Make it full-width like the "Sign In" button */
+    padding: 10px 15px;
+    margin-top: 15px;      /* Add space above it */
+    box-sizing: border-box; /* Make width include padding */
+    
+    /* Style */
+    background-color: #ffffff; /* Google's standard white */
+    border: 1px solid #d2d2d2; /* Light grey border */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    
+    /* Text */
+    color: #444444;        /* Google's grey text color */
+    text-decoration: none; /* Remove underline */
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif; /* Google's font (optional, but nice) */
+
+    /* Interaction */
+    transition: all 0.2s ease-in-out;
+}
+
+/* Style for the logo inside the button */
+.google-login-button img {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px; /* Space between logo and text */
+}
+
+/* Hover effect */
+.google-login-button:hover {
+    background-color: #f7f7f7; /* Slightly darker white */
+    border-color: #c0c0c0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Decision - Welcome</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transition.css') }}">
+    <script src="{{ url_for('static', filename='js/transition.js') }}" defer></script>
+
+    <style>
+        /* --- Root Variables for Theming --- */
+        :root {
+            --primary-blue: #007aff;
+            --light-blue: #5ac8fa;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(235, 235, 245, 0.7);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --soft-shadow: rgba(0, 0, 0, 0.25);
+        }
+
+        /* --- General Setup & Body --- */
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1d2b3a; /* Dark blue-gray background */
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        /* --- Animated Liquid Background --- */
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.7;
+        }
+
+        .shape1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            top: -100px;
+            left: -150px;
+            animation: move 20s infinite alternate ease-in-out;
+        }
+
+        .shape2 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--light-blue), #ffffff);
+            bottom: -150px;
+            right: -200px;
+            animation: move 25s infinite alternate-reverse ease-in-out;
+        }
+
+        /* Add this inside the <style> block in intro.html */
+
+.intro-logo {
+    width: 220px; /* You can adjust this size */
+    height: auto;
+    
+    /* We'll re-use the animation from your old title */
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out 0.2s forwards;
+}
+
+        @keyframes move {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(100px, 50px) rotate(180deg); }
+        }
+
+        /* --- Glass Panel Style --- */
+        .glass-container {
+            position: relative;
+            z-index: 1;
+            padding: 50px 70px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 8px 32px 0 var(--soft-shadow);
+            text-align: center;
+            animation: float-in 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* --- Animation for panel floating in --- */
+        @keyframes float-in {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Typography and Content Styling --- */
+        .animated-title {
+            color: var(--text-primary);
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease-out 1s forwards;
+        }
+        
+        /* --- Animation Setup for Title --- */
+        .animated-title span {
+            display: block;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .animated-title span:first-child { animation-delay: 0.2s; }
+        .animated-title span:last-child { animation-delay: 0.4s; }
+
+
+        /* --- Loading Indicator --- */
+        .loading-indicator {
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 1.5s forwards;
+        }
+
+        .loading-dots {
+            display: inline-flex;
+            gap: 6px;
+        }
+
+        .loading-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--light-blue);
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        
+        /* --- Keyframe Animations --- */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); } 
+            40% { transform: scale(1); }
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .glass-container {
+                padding: 40px 30px;
+                margin: 20px;
+            }
+            .animated-title {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .animated-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <div class="glass-container">
+        <img src="{{ url_for('static', filename='images/logo5.png') }}" alt="AD!QUATE Logo" class="intro-logo">
+        <p class="subtitle">Intelligent Adversity Quotient Assessment in Technical Education</p>
+        <div class="loading-indicator">
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Redirect with fade out effect after animation
+        const REDIRECT_DELAY = 4000;
+
+        setTimeout(() => {
+            document.body.style.transition = 'opacity 0.5s ease-out';
+            document.body.style.opacity = '0';
+            
+            setTimeout(() => {
+                // This will redirect to the home page route in your Flask app
+                window.location.href = '/home';
+            }, 500);
+        }, REDIRECT_DELAY);
+    </script>
+    
+</body>
+</html>

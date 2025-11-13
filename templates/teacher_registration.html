@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration - AD!QUATE</title>
+
+    <!-- Links to the new, dedicated CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher_registration.css') }}">
+    
+    <!-- Icons and Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Links to the new, dedicated JavaScript file -->
+    <script src="{{ url_for('static', filename='js/teacher_registration.js') }}" defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container">
+        <!-- Single Glass Panel for the Registration Form -->
+        <div class="glass-panel panel-main">
+            <div class="logo">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h1>Create Teacher Account</h1>
+            <p class="subtitle">Join our platform to manage your classes</p>
+            
+            <!-- Flashed Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Registration Form -->
+            <form method="POST" action="{{ url_for('teacher_register') }}" class="registration-form">
+                <!-- Full Name -->
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name" name="name" required placeholder="Full Name">
+                </div>
+                
+                <!-- Email -->
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="Email Address">
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="Password (min. 6 characters)" pattern=".{6,}" title="Password must be at least 6 characters long">
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <i class="fas fa-check-circle"></i>
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm Password">
+                </div>
+
+                <!-- Subject Taught -->
+                <div class="form-group">
+                    <i class="fas fa-book"></i>
+                    <input type="text" id="subject" name="subject" placeholder="Subject Taught (e.g., Math)">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    Register
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Already have an account? <a href="{{ url_for('teacher_login') }}" class="form-link">Login here</a></p>
+                <a href="{{ url_for('home') }}" class="form-link back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - AD!QUATE</title>
+
+    <!-- Links to the new, dedicated CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher_dashboard.css') }}">
+    
+    <!-- Icons and Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Links to the new, dedicated JavaScript file -->
+    <script src="{{ url_for('static', filename='js/teacher_dashboard.js') }}" defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Main Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header glass-panel">
+            <div class="header-left">
+                <i class="fas fa-chalkboard-teacher logo-icon"></i>
+                <h1>Welcome, Teacher!</h1> <!-- You can replace "Teacher" with {{ teacher.name }} -->
+            </div>
+            <div class="header-right">
+                <!-- New, corrected code -->
+                <a href="{{ url_for('teacher_logout') }}" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="dashboard-grid">
+            <!-- Main content area for actions -->
+            <section class="main-content glass-panel">
+                <h2>Upload & Classify Questions</h2>
+                <p class="subtitle">Upload a CSV or Excel file containing a single "question" column.</p>
+
+                <form action="/upload_predict" method="post" enctype="multipart/form-data" class="upload-form">
+                    <div class="form-group">
+                        <label for="file" class="file-label">
+                            <i class="fas fa-upload"></i>
+                            <span id="file-name" class="file-name-display">No file chosen...</span>
+                        </label>
+                        <input type="file" id="file" name="file" accept=".csv,.xlsx" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-cogs"></i>
+                        Classify File
+                    </button>
+                </form>
+            </section>
+
+            <!-- Sidebar for navigation and stats -->
+            <aside class="sidebar glass-panel">
+                <h3>Dashboard Menu</h3>
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active">
+                        <i class="fas fa-upload"></i>
+                        <span>Upload Questions</span>
+                    </a>
+                    <a href="{{ url_for('teacher_students') }}" class="nav-item">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>My Students</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-history"></i>
+                        <span>View History</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile Settings</span>
+                    </a>
+                </nav>
+                <div class="stats-overview">
+                    <h4>Quick Stats</h4>
+                    <div class="stat-item">
+                        <span>Total Questions</span>
+                        <span class="stat-value">1,204</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Files Processed</span>
+                        <span class="stat-value">32</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+</body>
+</html>

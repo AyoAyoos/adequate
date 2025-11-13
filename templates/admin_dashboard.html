@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AD!QUATE</title>
+
+    <!-- Main Stylesheet (Maroon Dashboard Theme) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    
+    <!-- Icons and Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='js/admin_dashboard.js') }}" defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <h1><i class="fas fa-user-shield"></i> Admin Dashboard</h1>
+            <p>Manage student accounts and site data</p>
+        </div>
+        <a href="{{ url_for('admin_logout') }}" class="btn btn-secondary">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="dashboard-grid">
+        <!-- Flashed Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flashed-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Left Panel: File Upload -->
+        <div class="glass-panel">
+    <h2><i class="fas fa-upload"></i> Upload Student Credentials</h2>
+    <form action="{{ url_for('admin_upload_students') }}" method="post" enctype="multipart/form-data" class="upload-form">
+        <p class="upload-instructions">
+            Upload an <code>.xlsx</code> file with columns: <strong>enrollment_no, password</strong>.
+        </p>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="teacher_id" style="display: block; margin-bottom: 0.5rem; text-align: left; font-weight: 600;">Assign to Teacher:</label>
+            <select name="teacher_id" id="teacher_id" class="teacher-select" required>
+                <option value="" disabled selected>-- Select a Teacher --</option>
+                {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="file-input-wrapper">
+            <input type="file" id="fileUpload" name="file" accept=".xlsx" required>
+            <label for="fileUpload" class="file-input-label">
+                <i class="fas fa-file-excel"></i>
+                <span id="file-name">Choose an Excel file...</span>
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-cogs"></i> Upload & Process
+        </button>
+    </form>
+</div>
+        <!-- Right Panel: Student List -->
+        <div class="glass-panel">
+            <h2><i class="fas fa-users"></i> Current Student Accounts</h2>
+            <div class="table-container">
+                {% if students %}
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Enrollment No</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student['enrollment_no'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="no-data-message">No students found. Upload a file to populate this list.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - AD!QUATE</title>
+
+    <!-- Dedicated Stylesheet for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_dashboard.css') }}">
+    
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Dedicated JavaScript for this page -->
+    <script src="{{ url_for('static', filename='js/student_dashboard.js') }}" defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container">
+        <!-- Main Glass Panel for the Dashboard -->
+        <div class="glass-panel">
+            <div class="dashboard-header">
+                <div class="welcome-text">
+                    <h1>Welcome, {{ session['enrollment_no'] }}!</h1>
+                    <p class="subtitle">Your journey to career clarity starts here.</p>
+                </div>
+                <a href="{{ url_for('student_logout') }}" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+
+            <!-- This is the 'smart' logic block, now styled within the panel -->
+            {% if assessment_taken %}
+                <!-- If the student HAS taken the test, show this -->
+                <div class="info-box">
+                    <i class="fas fa-check-circle icon-success"></i>
+                    <h2>Assessment Complete</h2>
+                    <p>Your personalized report is ready. View your AQ score, trait analysis, and career recommendations now.</p>
+                    <a href="{{ url_for('student_report') }}" class="btn btn-primary">
+                        <i class="fas fa-chart-pie"></i>
+                        View Your Report
+                    </a>
+                </div>
+
+            {% else %}
+                <!-- If the student HAS NOT taken the test, show this -->
+                <div class="info-box">
+                    <i class="fas fa-rocket icon-start"></i>
+                    <h2>Begin Your Career Assessment</h2>
+                    <p>Discover your ideal career path. This assessment will analyze your skills and Adversity Quotient (AQ) to provide personalized guidance.</p>
+                    <a href="{{ url_for('student_assessment') }}" class="btn btn-primary">
+                        <i class="fas fa-play-circle"></i>
+                        Start Assessment
+                    </a>
+                </div>
+            {% endif %}
+            
+            <div class="dashboard-footer">
+                <a href="{{ url_for('home') }}" class="form-link back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

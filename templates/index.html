@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AD!QUATE</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Linking External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transition.css') }}">
+</head>
+<body>
+
+    <!-- Animated liquid background shapes -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        
+        <!-- Main Login Panel -->
+        <div class="glass-panel panel-main">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo5.png') }}" alt="AD!QUATE Logo" class="logo-image">
+            </div>
+            
+            
+            
+        <div class="buttons">
+    <!-- Admin button is now first and is the primary button -->
+    
+        <a class="btn btn-primary" style="opacity: 0.6; cursor: not-allowed;">
+            <i class="fas fa-user-shield"></i>
+            Admin
+        </a>
+    
+        <a class="btn btn-secondary" style="opacity: 0.6; cursor: not-allowed;">
+            <i class="fas fa-chalkboard-teacher"></i>
+            Teacher Portal
+        </a>
+
+
+    <!-- Student button is last -->
+    <a href="{{ url_for('student_login') }}" class="btn btn-secondary">
+        <i class="fas fa-user-graduate"></i>
+        Student Portal
+    </a>
+</div>
+        </div>
+        
+        <!-- Features Panel -->
+        <div class="glass-panel panel-features">
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-brain"></i>
+                    <span>AI-Powered Question Analysis</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Real-time Progress</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>Smart Assessments</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- Linking External JavaScript -->
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/transition.js') }}" defer></script>
+
+</body>
+</html>
+

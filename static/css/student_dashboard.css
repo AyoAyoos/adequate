@@ -1,0 +1,204 @@
+/* --- Root Variables for Student Theming --- */
+:root {
+    --primary-orange: #ff9500;
+    --light-yellow: #ffcc00;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(235, 235, 245, 0.7);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --soft-shadow: rgba(0, 0, 0, 0.25);
+    --dark-bg: #2c2c2e; /* A dark, warm grey for the background */
+}
+
+/* --- General Setup & Body --- */
+html {
+    background-color: #1c1c1e; /* Black curtain for transitions */
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background: var(--dark-bg);
+    color: var(--text-primary);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+    
+    /* --- Transition Fix --- */
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+body.is-loaded { 
+    opacity: 1; 
+}
+body.is-leaving { 
+    opacity: 0; 
+}
+
+/* --- Animated Liquid Background --- */
+.background-shapes {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.6;
+}
+.shape1 {
+    width: 450px; height: 450px;
+    background: linear-gradient(135deg, var(--primary-orange), var(--light-yellow));
+    top: -100px; left: -150px;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 500px; height: 500px;
+    background: linear-gradient(135deg, var(--light-yellow), #ff5e00);
+    bottom: -150px; right: -200px;
+    animation: move 25s infinite alternate-reverse ease-in-out;
+}
+@keyframes move {
+    from { transform: translate(0, 0) rotate(0deg) scale(1); }
+    to { transform: translate(100px, 50px) rotate(180deg) scale(1.1); }
+}
+
+/* --- Main Content Container --- */
+.container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* --- Glass Panel Style --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px 0 var(--soft-shadow);
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    
+    opacity: 0;
+    animation: float-in 0.8s 0.2s ease-out forwards;
+}
+@keyframes float-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Dashboard Specific Styles --- */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px solid var(--glass-border);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+.welcome-text {
+    text-align: left;
+}
+.welcome-text h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-primary);
+}
+.welcome-text .subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin: 4px 0 0 0;
+}
+
+/* Info Box inside the dashboard */
+.info-box {
+    background: rgba(0,0,0,0.15);
+    padding: 30px;
+    border-radius: 20px;
+}
+.info-box .icon-success {
+    font-size: 48px;
+    color: #32d74b; /* Green for success */
+    margin-bottom: 16px;
+}
+.info-box .icon-start {
+    font-size: 48px;
+    color: var(--light-yellow);
+    margin-bottom: 16px;
+}
+.info-box h2 {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+.info-box p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto 24px auto;
+}
+
+/* --- Button Styles --- */
+.btn {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    gap: 12px; padding: 14px 24px;
+    border: none; border-radius: 16px;
+    font-weight: 600; font-size: 16px;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.3s ease;
+}
+.btn i { font-size: 18px; }
+
+.btn-primary {
+    background: var(--primary-orange);
+    color: white;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px 8px rgba(255, 149, 0, 0.6);
+}
+
+.btn-secondary {
+    background: var(--glass-bg);
+    color: var(--text-secondary);
+    border: 1.5px solid var(--glass-border);
+}
+.btn-secondary:hover {
+    background: rgba(255,255,255,0.2);
+    color: var(--text-primary);
+}
+
+/* --- Footer & Links --- */
+.dashboard-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1.5px solid var(--glass-border);
+}
+.form-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.form-link:hover {
+    color: var(--light-yellow);
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}

@@ -1,0 +1,101 @@
+/* registration.css */
+
+/* Overrides or additions to home.css for the form */
+.registration-form {
+    background-color: #ffffff; /* Lighter background for the form itself */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 30px;
+    text-align: left; /* Align form elements to the left */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block; /* Each label on its own line */
+    margin-bottom: 8px;
+    color: #34495e;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group select {
+    width: 100%; /* Full width of its parent container */
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    color: #495057;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group select:focus {
+    border-color: #3498db; /* Highlight on focus */
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    outline: none; /* Remove default outline */
+}
+
+/* Style for the select dropdown */
+.form-group select {
+    appearance: none; /* Remove default browser styling for select */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2334495E%22%20d%3D%22M287%2C197.3L146.2%2C56.6L5.4%2C197.3h281.6z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px; /* Space for the custom arrow */
+}
+
+
+.primary-btn {
+    /* Use existing .btn styles, add any specific overrides if needed */
+    width: 100%; /* Make the button full width within the form */
+    margin-top: 25px; /* Add some space above the button */
+    padding: 15px 28px;
+    font-size: 1rem;
+}
+
+.login-link {
+    margin-top: 30px;
+    font-size: 0.95rem;
+    color: #555;
+    text-align: center;
+}
+
+.login-link a {
+    color: #34495e;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.login-link a:hover {
+    color: #2c3e50;
+    text-decoration: underline;
+}
+
+/* Error messages (You'll need JS to dynamically add these) */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Responsive adjustments for the form */
+@media (max-width: 768px) {
+    .registration-form {
+        padding: 20px;
+    }
+}

@@ -1,0 +1,199 @@
+/* --- Root Variables for Theming --- */
+:root {
+    --primary-blue: #007aff;
+    --light-blue: #5ac8fa;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(235, 235, 245, 0.7);
+    --glass-bg: rgba(40, 40, 60, 0.6); /* Darker glass for better contrast */
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --soft-shadow: rgba(0, 0, 0, 0.25);
+    --hover-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* --- General Setup & Body --- */
+body {
+    margin: 0;
+    /* --- FIX: Added the missing semicolon to this line --- */
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    /* --- THIS IS THE CHANGE --- */
+    background: #1d2b3a;
+    color: var(--text-primary);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    opacity: 0; /* Start every page invisible */
+    transition: opacity 0.5s ease-out;
+}
+
+body.is-loaded {
+    opacity: 1;
+}
+
+body.is-leaving {
+    opacity: 0;
+}
+
+/* --- Animated Liquid Background --- */
+.background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.7;
+}
+.shape1 {
+    width: 400px; height: 400px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+    top: -100px; left: -150px;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.shape2 {
+    width: 500px; height: 500px;
+    background: linear-gradient(135deg, var(--light-blue), #9b59b6); /* Added purple for more visual interest */
+    bottom: -150px; right: -200px;
+    animation: move 25s infinite alternate-reverse ease-in-out;
+}
+@keyframes move {
+    from { transform: translate(0, 0) rotate(0deg); }
+    to { transform: translate(100px, 50px) rotate(180deg); }
+}
+
+/* --- Main Content Container --- */
+.container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+}
+
+/* --- Glass Panel Style --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px 0 var(--soft-shadow);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    opacity: 0;
+    animation: float-in 0.8s ease-out forwards;
+    transition: transform 0.2s ease-out;
+}
+@keyframes float-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.panel-main { animation-delay: 0.2s; }
+.panel-features { animation-delay: 0.4s; }
+
+/* --- Typography and Content Styling --- */
+.logo i {
+    font-size: 48px;
+    color: var(--light-blue);
+    text-shadow: 0 0 20px rgba(90, 200, 250, 0.7);
+    margin-bottom: 16px;
+}
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+.subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
+/* --- Glowing Button Styles (Improved Logic) --- */
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.btn i { font-size: 18px; }
+
+/* Primary button starts blue and glows on hover */
+.btn-primary {
+    background: var(--glass-bg);
+        border: 1.5px solid var(--glass-border);
+
+    color: white;
+}
+.btn-primary:hover {
+    background: var(--primary-blue);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 30px 8px rgba(0, 122, 255, 0.6);
+}
+
+/* Secondary buttons start glassy and turn blue on hover */
+.btn-secondary {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    border: 1.5px solid var(--glass-border);
+}
+.btn-secondary:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 30px 8px rgba(0, 122, 255, 0.6);
+}
+
+/* --- Features Section --- */
+.features {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 16px;
+}
+.feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    max-width: 90px;
+}
+.feature i {
+    font-size: 24px;
+    color: var(--text-primary);
+}
+
+/* Add this to your static/css/index.css file */
+
+.glass-panel .logo .logo-image {
+    width: 150px;  /* You can adjust this size */
+    height: auto;
+    margin-bottom: 10px;
+  }

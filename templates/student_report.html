@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Career Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_report.css') }}">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <!-- This 'report-content' div is what we will target for the PDF download -->
+<div id="report-content" class="report-container" data-enrollment="{{ student.enrollment_no }}">
+    
+        <div class="header">
+            <h1>Your Personalized Career Report</h1>
+            <p>Based on your assessment, here is a detailed analysis of your profile.</p>
+        </div>
+
+        <!-- Section 1: Your AQ Profile -->
+        <div class="card aq-category-card">
+            <h2>Your Adversity Quotient (AQ) Profile</h2>
+            {% if aq_category and aq_category.name %}
+                <p class="category-name">{{ aq_category.name }}</p>
+            {% else %}
+                <p class="category-name">Category not available</p>
+            {% endif %}
+            
+            {% if student and student.aq_score %}
+    <p style="text-align: center;"><strong>Your Score:</strong> {{ student.aq_score }}</p>
+{% else %}
+    <p style="text-align: center;"><strong>Your Score:</strong> Score not available</p>
+{% endif %}
+            
+            {% if aq_category and aq_category.description %}
+                <p class="category-description">{{ aq_category.description }}</p>
+            {% else %}
+                <p class="category-description">Description not available</p>
+            {% endif %}
+        </div>
+
+        <!-- Section 2: Your AQ Trait Breakdown -->
+        <div class="card">
+            <h2>Your AQ Trait Breakdown</h2>
+            <div class="profile-grid">
+                <div class="chart-container">
+                    <div id="chartData" data-scores='{{ trait_scores_json | safe }}'></div>
+
+<canvas id="aqPieChart"></canvas>
+                </div>
+                <div class="top-traits">
+                    {% if top_traits and top_traits|length >= 2 %}
+                        <p class="top-traits-text">
+                            This chart illustrates your unique mix of strengths. Your dominant traits are:
+                            <br>
+                            <strong>{{ top_traits[0][0] }} & {{ top_traits[1][0] }}</strong>.
+                        </p>
+                    {% else %}
+                        <p class="top-traits-text">
+                            This chart illustrates your unique mix of strengths.
+                        </p>
+                    {% endif %}
+                    <p>These top traits were automatically identified from your test answers and used as a key input for your personalized career recommendations.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Summary Table -->
+        <div class="card">
+            <h2>Profile Summary</h2>
+            <table class="summary-table">
+            <table class="summary-table">
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+                <th>Associated Bloom's Taxonomy Level</th>
+                <th>Relevant Skills</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Overall AQ Score</strong></td>
+                <td>{{ student.aq_score if student and student.aq_score else 'N/A' }}</td>
+                <td>(Overall Resilience Indicator)</td>
+                <td>(Skills are derived from top Levels)</td>
+            </tr>
+            {% if top_traits %}
+                {% for trait, score in top_traits %}
+                <tr>
+                    <td><strong>Top Trait: {{ trait }}</strong></td>
+                    <td>Score: {{ score * 2 }}</td>
+                    <td>{{ bloom_map.get(trait, 'N/A') }}</td>
+                    
+                    <td>
+                        {% if trait_skills_map and trait in trait_skills_map %}
+                            <ul class="skills-list">
+                                {% for skill in trait_skills_map[trait][:3] %}
+                                    <li>{{ skill }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No trait data available</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+        </div>
+
+        <!-- Section 4: AI-Powered Career Recommendations -->
+        <div class="card">
+            <h2>AI-Powered Career Recommendations</h2>
+            <div class="recommendation-grid">
+                {% if suggestions and suggestions|length > 0 %}
+                    {% for suggestion in suggestions %}
+                    <div class="recommendation-card">
+                        <h3>{{ loop.index }}. {{ suggestion.career if suggestion.career else 'Career not specified' }}</h3>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No career suggestions could be generated at this time. Please ensure you have completed all steps.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div> <!-- End of 'report-content' div -->
+
+<div class="report-actions">
+    <button id="download-btn" class="report-action-btn download-btn">Download Report as PDF</button>
+    
+    <!-- THIS IS THE NEW SMART BUTTON LOGIC -->
+    {% if viewer_is_teacher %}
+        <!-- This link shows ONLY for teachers -->
+        <a href="{{ url_for('teacher_students') }}" class="report-action-btn back-btn">Back to Student List</a>
+    {% else %}
+        <!-- This link shows ONLY for students -->
+        <a href="{{ url_for('student_dashboard') }}" class="report-action-btn back-btn">Back to Dashboard</a>
+    {% endif %}
+</div>
+    <!-- THIS IS THE FIX: The filename now correctly points to your JS file -->
+    <script src="{{ url_for('static', filename='js/student_report.js') }}"></script>
+</body>
+</html>
+

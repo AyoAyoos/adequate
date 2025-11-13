@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Assessment - AD!QUATE</title>
+
+    <!-- Dedicated Stylesheet for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_assessment.css') }}">
+    
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Dedicated JavaScript for this page -->
+    <script src="{{ url_for('static', filename='js/student_assessment.js') }}" defer></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container">
+        <!-- Main Glass Panel for the Assessment -->
+        <div class="glass-panel">
+            <div class="assessment-header">
+                <h1>Adversity Quotient (AQ) Test</h1>
+                <p class="subtitle">Answer these 23 questions to discover your core strengths.</p>
+            </div>
+
+            <!-- Styled Progress Bar -->
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+            </div>
+
+            <!-- The form posts to the correct route -->
+            <form action="{{ url_for('submit_assessment') }}" method="POST">
+                
+                <div id="questions-container">
+                    <!-- JavaScript will generate the 23 question cards here -->
+                </div>
+                
+                <div class="submit-container">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        See My Results
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

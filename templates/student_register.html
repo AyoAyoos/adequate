@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-R">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - AD!QUATE</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_login.css') }}">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <main class="container">
+        <div class="glass-panel panel-main">
+            
+            <div class="logo">
+                <i class="fas fa-user-plus"></i> </div>
+            <h1>Create Account</h1> <p class="subtitle">Sign up to access your student portal</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('student_register') }}" class="login-form">
+                
+                <div class="form-group">
+                    <i class="fas fa-id-card"></i>
+                    <input type="text" id="enrollment_no" name="enrollment_no" required placeholder="Enrollment or ID Number">
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="Email Address">
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="Create Password">
+                    <button type="button" class="toggle-password" data-target="password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <i class="fas fa-check-circle"></i>
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm Password">
+                    <button type="button" class="toggle-password" data-target="confirm_password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    Register
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <a href="{{ url_for('student_login') }}" class="form-link back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Already have an account? Log In
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Page Load Transition ---
+        // This line triggers the fade-in animation from your CSS
+        document.body.classList.add('is-loaded');
+
+        // --- Password Toggle JS ---
+        const toggleButtons = document.querySelectorAll('.toggle-password');
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Get the target input ID from the 'data-target' attribute
+                const targetInputId = this.getAttribute('data-target');
+                const targetInput = document.getElementById(targetInputId);
+                const icon = this.querySelector('i');
+
+                if (targetInput.type === 'password') {
+                    targetInput.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    targetInput.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+
+        // --- Page Exit Transition ---
+        // This mimics the logic from your external student_login.js
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Stop the link from navigating immediately
+                const destination = this.href;
+                
+                // Trigger the fade-out CSS animation
+                document.body.classList.remove('is-loaded');
+                document.body.classList.add('is-leaving');
+                
+                // Wait for the animation to finish (500ms) before changing page
+                setTimeout(() => {
+                    window.location.href = destination;
+                }, 500); 
+            });
+        });
+    </script>
+</body>
+</html>

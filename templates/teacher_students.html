@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Students - AD!QUATE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/teacher_dashboard.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <div class="dashboard-container">
+        <header class="dashboard-header glass-panel">
+            <div class="header-left">
+                <i class="fas fa-user-graduate logo-icon"></i>
+                <h1>My Students</h1>
+            </div>
+            <div class="header-right">
+                <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+            </div>
+        </header>
+
+        <main class="student-list-container">
+            <div class="glass-panel">
+                {% if students %}
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Enrollment No</th>
+                            <th>Assessment Status</th>
+                            <th>AQ Score</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.enrollment_no }}</td>
+                            <td>
+                                {% if student.aq_score %}
+                                    <span style="color: #32d74b;">Completed</span>
+                                {% else %}
+                                    <span style="color: #ffcc00;">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ student.aq_score if student.aq_score else 'N/A' }}</td>
+                            <td>
+                                <a href="{{ url_for('student_report', student_id=student.id) }}" class="btn-view-report" title="View Report">
+    <i class="fas fa-eye"></i>
+</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="no-data-message">
+                    <i class="fas fa-info-circle"></i>
+                    You have not been assigned any students yet.
+                </p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .student-list-container {
+            padding: 0 1rem; /* Add some padding for smaller screens */
+        }
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: var(--text-primary);
+        }
+        .student-table th, .student-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .student-table thead {
+            background: rgba(0,0,0,0.2);
+        }
+        .student-table tbody tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .no-data-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+        .btn-view-report {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+        .btn-view-report:hover {
+            color: var(--primary-pink);
+        }
+    </style>
+</body>
+</html>
