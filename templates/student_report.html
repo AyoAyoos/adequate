@@ -80,7 +80,6 @@
                 <th>Metric</th>
                 <th>Value</th>
                 <th>Associated Bloom's Taxonomy Level</th>
-                <th>Relevant Skills</th>
             </tr>
         </thead>
         <tbody>
@@ -88,32 +87,40 @@
                 <td><strong>Overall AQ Score</strong></td>
                 <td>{{ student.aq_score if student and student.aq_score else 'N/A' }}</td>
                 <td>(Overall Resilience Indicator)</td>
-                <td>(Skills are derived from top Levels)</td>
+               
             </tr>
-            {% if top_traits %}
-                {% for trait, score in top_traits %}
+        
+            <!-- Check if at least one top trait exists -->
+            {% if top_traits and top_traits[0] %}
+                {% set trait_name_1 = top_traits[0][0] %}
+                {% set trait_score_1 = top_traits[0][1] %}
                 <tr>
-                    <td><strong>Top Trait: {{ trait }}</strong></td>
-                    <td>Score: {{ score * 2 }}</td>
-                    <td>{{ bloom_map.get(trait, 'N/A') }}</td>
-                    
-                    <td>
-                        {% if trait_skills_map and trait in trait_skills_map %}
-                            <ul class="skills-list">
-                                {% for skill in trait_skills_map[trait][:3] %}
-                                    <li>{{ skill }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
+                    <!-- This now matches your image: "Top Trait 1" -->
+                    <td><strong>Top Trait 1: {{ trait_name_1 }}</strong></td>
+                    <td>Score: {{ trait_score_1 * 2 }}</td>
+                    <td>{{ bloom_map.get(trait_name_1, 'N/A') }}</td>
+                   
                 </tr>
-                {% endfor %}
+            {% endif %}
+        
+            <!-- Check if a second top trait exists -->
+            {% if top_traits and top_traits[1] %}
+                {% set trait_name_2 = top_traits[1][0] %}
+                {% set trait_score_2 = top_traits[1][1] %}
+                <tr>
+                    <!-- This now matches your image: "Top Trait 2" -->
+                    <td><strong>Top Trait 2: {{ trait_name_2 }}</strong></td>
+                    <td>Score: {{ trait_score_2 * 2 }}</td>
+                    <td>{{ bloom_map.get(trait_name_2, 'N/A') }}</td>
+                   
+                </tr>
             {% else %}
+                <!-- This 'else' block will catch cases where there are zero traits -->
+                {% if not top_traits or not top_traits[0] %}
                 <tr>
                     <td colspan="4">No trait data available</td>
                 </tr>
+                {% endif %}
             {% endif %}
         </tbody>
     </table>

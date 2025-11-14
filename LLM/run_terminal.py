@@ -24,7 +24,7 @@ def run_cli():
 
     # Use our helper function to define robust paths to the data files.
     CONFIG = {
-        "student_data_path": get_absolute_path("data/Final_Sheet.csv"),
+        "student_data_path": get_absolute_path("data\Final_Sheet - Sheet3.csv"),
         "research_paper_path": get_absolute_path("data/Research_Paper.pdf"),
         "faiss_index_path": get_absolute_path("embeddings/faiss_index")
     }

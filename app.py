@@ -22,6 +22,74 @@ url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_SERVICE_KEY")
 supabase: Client = create_client(url, key)
 
+
+# In app.py
+
+SKILL_LEVELS = {
+    "low": [
+        "Accuracy & Speed",
+        "Agile",
+        "Attention to Detail",
+        "Basic Computer Skills",
+        "Basic IT Knowledge",
+        "Communication",
+        "communication skills", # Standardize this
+        "Computer Basics",
+        "Customer Service",
+        # ... add all other "low" skills here
+    ],
+    "medium": [
+        "Advanced SQL",
+        "C++ Programming",
+        "CSS Flexbox", # Example
+        "Database Management",
+        "Git",
+        "HTML/CSS/JavaScript",
+        "Java",
+        "JavaScript",
+        "Python",
+        # ... add all other "medium" skills here
+    ],
+    "high": [
+        "AI & Machine Learning", # Example
+        "Cloud Computing (AWS/Azure)",
+        "Deep Learning",
+        "Machine Learning Algorithms",
+        "NLP Libraries",
+        "System Design & Architecture",
+        # ... add all other "high" skills here
+    ]
+}
+
+# Add this new function to app.py
+
+def get_skills_for_user(scores_dict):
+    """
+    Determines a user's AQ level from their scores and
+    returns the correctly filtered list of skills.
+    """
+    if not scores_dict:
+        return [] # Return empty list if no scores
+
+    # 1. Get the user's total AQ score.
+    #    This handles both 'testdrive' users and real users.
+    total_score = scores_dict.get('total_aq_score') or scores_dict.get('aq_score', 0)
+    
+    # 2. Determine the AQ level (you can adjust these thresholds)
+    if total_score < 140:
+        level = "low"
+    elif total_score < 180:
+        level = "medium"
+    else:
+        level = "high"
+    
+    # 3. Get the correct skill list from your dictionary
+    filtered_skills = SKILL_LEVELS.get(level, [])
+    
+    # 4. Return the sorted list
+    return sorted(filtered_skills)
+
+    
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "hehe"
 
@@ -33,7 +101,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 print("--- FLASK APP STARTING: INITIALIZING GUIDANCE ENGINE ---")
 # Define the paths for the engine's data files
 engine_config = {
-    'student_data_path': os.path.join('LLM', 'data', 'Final_Sheet.csv'),
+    'student_data_path': os.path.join('LLM', 'data', 'Final_Sheet - Sheet3.csv'),
     'research_paper_path': os.path.join('LLM', 'data', 'Research_Paper.pdf'),
     'faiss_index_path': os.path.join('LLM', 'embeddings', 'faiss_index')
 }
@@ -644,8 +712,10 @@ def show_assessment_results():
     else:
         # --- NEW SUPABASE CODE ---
         # Replaces get_db_connection, conn.execute, fetchone, and conn.close
+        # --- NEW SUPABASE CODE ---
+        # Replaces get_db_connection, conn.execute, fetchone, and conn.close
         response = supabase.table('students').select(
-            'control_score, ownership_score, reach_score, endurance_score, attitude_score'
+            'aq_score, control_score, ownership_score, reach_score, endurance_score, attitude_score'
         ).eq('id', session['student_id']).limit(1).execute()
         
         if response.data:
@@ -658,10 +728,15 @@ def show_assessment_results():
         return redirect(url_for('student_assessment'))
 
     # --- This part is unchanged ---
-    all_skills = sorted(list(set(guidance_engine.all_skills_from_csv)))
+    # --- This is the NEW logic ---
+    # Call your new function to get the *filtered* skill list
+    filtered_skills = get_skills_for_user(scores)
+    
     scores_json = json.dumps(scores)
-    return render_template("assessment_results.html", scores=scores, all_skills=all_skills)
-
+    
+    # Pass the new 'filtered_skills' list to the template.
+    # The template (assessment_results.html) will still call it 'all_skills'
+    return render_template("assessment_results.html", scores=scores, all_skills=filtered_skills)
 
 @app.route("/student/generate_report", methods=["POST"])
 def generate_report():
@@ -821,9 +896,14 @@ def student_report(student_id=None):
         "Reach": "L5: Evaluating", "Endurance": "L5: Evaluating", "Attitude": "L4: Analyzing, L6: Creating"
     }
     bloom_skill_map = {
-        "L1": ["Remembrance"], "L2": ["Inference"], "L3": ["Solution-finding", "Critical Thinking", "Decision-making"],
-        "L4": ["Reasoning"], "L5": ["Judgment"], "L6": ["Abstract resoning"]
+        "L1": ["Remembrance"],
+        "L2": ["Inference"],
+        "L3": ["Solution-finding"],
+        "L4": ["Reasoning"],
+        "L5": ["Judgment"],
+        "L6": ["Abstract resoning"]  # (I kept your spelling)
     }
+
     trait_skills_map = {}
     for trait, levels_str in bloom_level_map.items():
         level_codes = re.findall(r'L\d', levels_str)
@@ -831,7 +911,14 @@ def student_report(student_id=None):
         for code in level_codes:
             collected_skills.extend(bloom_skill_map.get(code, []))
     trait_skills_map[trait] = list(dict.fromkeys(collected_skills))
-    
+    overall_top_skills = []
+    seen_skills = set()
+    for trait_name, trait_score in top_traits_list:
+            skills = trait_skills_map.get(trait_name, [])
+    for skill in skills:
+        if skill not in seen_skills:
+            overall_top_skills.append(skill)
+            seen_skills.add(skill)
     # conn.close() <-- REMOVED
     
     # The final render_template call now includes the new variable
