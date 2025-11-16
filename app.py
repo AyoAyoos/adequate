@@ -613,7 +613,7 @@ def student_register():
         # 1. Go to your Supabase table for 'teachers'.
         # 2. Manually add a row called "Public Students".
         # 3. Get the 'id' for that row and paste it here.
-        PUBLIC_TEACHER_ID = 4 # <-- CHANGE THIS ID
+        PUBLIC_TEACHER_ID = 7 # <-- CHANGE THIS ID
 
         try:
             response = supabase.table('students').insert({
