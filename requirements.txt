@@ -35,3 +35,5 @@ gunicorn
 
 # For reading .xlsx files
 openpyxl
+
+flask_login
