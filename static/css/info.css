@@ -1,0 +1,209 @@
+/* --- Root Variables (Matched to index.css) --- */
+:root {
+    --primary-blue: #007aff;
+    --light-blue: #5ac8fa;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(235, 235, 245, 0.7);
+    --glass-bg: rgba(40, 40, 60, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --hover-bg: rgba(255, 255, 255, 0.1);
+    --shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Global Settings --- */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', "Segoe UI", Roboto, sans-serif;
+    background: #1d2b3a; /* Dark Background */
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Aligns to top so scrolling works */
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+/* --- Main Container --- */
+.info-container {
+    max-width: 1000px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+/* --- Header Section --- */
+.info-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.info-header h1 {
+    font-size: 3rem;
+    background: linear-gradient(135deg, #fff 0%, var(--light-blue) 100%);
+    background-clip: text;           /* standard property */
+    -webkit-background-clip: text;   /* vendor-prefixed for WebKit */
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.info-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* --- Stats Grid (Cards) --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: var(--hover-bg);
+    box-shadow: 0 0 20px rgba(0, 122, 255, 0.4);
+    border-color: var(--primary-blue);
+}
+
+.icon-wrapper {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Icon Colors */
+.student-icon { color: #4cd964; } /* Green */
+.assessment-icon { color: #ffcc00; } /* Yellow/Orange */
+.teacher-icon { color: var(--light-blue); } /* Blue */
+
+.stat-details h2 {
+    font-size: 2.5rem;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.stat-details p {
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+}
+
+/* --- Research Content Section --- */
+.research-container {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 3rem;
+    margin: 2rem 0;
+    color: var(--text-primary);
+    text-align: left;
+    box-shadow: var(--shadow);
+}
+
+.research-container h1 {
+    font-size: 1.8rem;
+    color: var(--light-blue);
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.research-container h2 {
+    color: var(--primary-blue);
+    margin-top: 2.5rem;
+    font-size: 1.4rem;
+}
+
+.research-container h3 {
+    color: var(--text-secondary);
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.research-container p, 
+.research-container li {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.research-container ul, 
+.research-container ol {
+    padding-left: 20px;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Research Tables --- */
+.research-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.research-table th, 
+.research-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.research-table th {
+    background-color: rgba(0, 122, 255, 0.2); /* Blue tint header */
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.research-table td {
+    color: var(--text-secondary);
+}
+
+.research-table tr:hover td {
+    background-color: var(--hover-bg);
+}
+
+/* --- Action Area (Button) --- */
+.action-area {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 12px 35px;
+    background: var(--glass-bg);
+    border: 1.5px solid var(--glass-border);
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.btn-home:hover {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 30px 8px rgba(0, 122, 255, 0.5);
+}

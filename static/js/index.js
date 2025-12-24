@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const glassPanels = document.querySelectorAll('.glass-panel');
 
     glassPanels.forEach(panel => {
+        if (panel.classList.contains('no-tilt')) return; // disable tilt on this panel
         panel.addEventListener('mousemove', e => {
             const rect = panel.getBoundingClientRect();
             const x = e.clientX - rect.left;

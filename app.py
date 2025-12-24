@@ -2,13 +2,14 @@ import os
 import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import current_user # Make sure you import this
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from model import predict_bloom_level
 import json
 from dotenv import load_dotenv
 from supabase import create_client, Client
 import re
+import time # <--- ADD THIS AT THE TOP OF app.py
 
 from LLM.engine import GuidanceEngine
 
@@ -209,6 +210,41 @@ def intro():
     """
     return render_template("intro.html")
 
+@app.route('/info')
+def info():
+    """
+    Fetches key statistics from Supabase and renders the info page.
+    """
+    try:
+        # 1. Total Students Enrolled
+        # head=True gets JUST the count, not the actual data (much faster)
+        students_res = supabase.table('students').select('*', count='exact', head=True).execute()
+        total_students = students_res.count if students_res.count else 0
+
+        # 2. Assessments Completed
+        # instead of checking for "not None", we simply check if the score is greater than 0.
+        completed_res = supabase.table('students').select('*', count='exact', head=True).gt('aq_score', 0).execute()
+        assessments_completed = completed_res.count if completed_res.count else 0
+        
+        # 3. Total Teachers Registered
+        teachers_res = supabase.table('teachers').select('*', count='exact', head=True).execute()
+        total_teachers = teachers_res.count if teachers_res.count else 0
+
+    except Exception as e:
+        # If DB fails, print error to console but show 0 on page so it doesn't crash
+        print(f"Error fetching stats from Supabase: {e}")
+        total_students = 0
+        assessments_completed = 0
+        total_teachers = 0
+
+    stats = {
+        'total_students': total_students,
+        'assessments_completed': assessments_completed,
+        'total_teachers': total_teachers
+    }
+    
+    return render_template("info.html", stats=stats)
+
 @app.route('/home')
 def home():
     """
@@ -219,7 +255,7 @@ def home():
 # --- Teacher Authentication ---
 
 
-"""
+
 
 @app.route("/teacher/register", methods=["GET", "POST"])
 def teacher_register():
@@ -230,7 +266,7 @@ def teacher_register():
         confirm_password = request.form["confirm_password"]
         subject = request.form.get("subject", "")
 
-        # Basic validation (unchanged)
+        # Basic validation
         if not name or not email or not password:
             flash("Please fill out all required fields.", "danger")
             return redirect(url_for("teacher_register"))
@@ -239,31 +275,35 @@ def teacher_register():
             flash("Passwords do not match!", "danger")
             return redirect(url_for("teacher_register"))
 
-        # Hash the password before saving (unchanged)
-        hashed_password = generate_password_hash(password)
-
         try:
-            # --- NEW SUPABASE CODE ---
-            # Replaces conn.execute, conn.commit, conn.close
-            response = supabase.table('teachers').insert({
-                "name": name,
+            # Register Teacher and send OTP
+            response = supabase.auth.sign_up({
                 "email": email,
-                "password": hashed_password,
-                "subject": subject
-            }).execute()
-            # --- END OF NEW CODE ---
+                "password": password,
+                "options": {
+                    "data": {
+                        "name": name,
+                        "subject": subject,
+                        "role": "teacher" # This tells your SQL trigger to put them in the 'teachers' table
+                    }
+                }
+            })
 
-            flash("Registration successful! Please log in.", "success")
-            return redirect(url_for("teacher_login"))
+            if response.user:
+                # 1. Store email in session so verify_otp knows who it is
+                session['email_to_verify'] = email
+                
+                # 2. Flash instruction
+                flash(f"Verification code sent to {email}. Please enter it below.", "info")
+                
+                # 3. Redirect to the OTP page (Same page students use)
+                return redirect(url_for("verify_otp"))
         
         except Exception as e:
-            # --- NEW SUPABASE ERROR HANDLING ---
-            # This catches the duplicate email error (and other errors)
-            flash("Email address already registered. Please log in.", "danger")
+            flash(f"Error: {str(e)}", "danger")
             return redirect(url_for("teacher_register"))
 
     return render_template("teacher_registration.html")
-
 #
 # THIS LINE MUST HAVE ZERO INDENTATION
 #
@@ -273,24 +313,25 @@ def teacher_login():
         email = request.form["email"]
         password = request.form["password"]
 
-        # --- NEW SUPABASE CODE ---
-        # Replaces conn.execute and conn.close
-        response = supabase.table('teachers').select('*').eq('email', email).limit(1).execute()
-        # --- END OF NEW CODE ---
+        try:
+            # Teachers log in directly with Email
+            auth_response = supabase.auth.sign_in_with_password({
+                "email": email,
+                "password": password
+            })
 
-        teacher = None
-        # --- NEW: Check if Supabase found a user ---
-        if response.data:
-            teacher = response.data[0] # This is the new "fetchone()"
+            # Get their public ID
+            user_id = auth_response.user.id
+            teacher_data = supabase.table('teachers').select('*').eq('user_id', user_id).single().execute()
 
-        # This logic is now checking the Supabase 'teacher' variable
-        if teacher and check_password_hash(teacher['password'], password):
-            # Login successful, store teacher info in session
-            session['teacher_id'] = teacher['id']
-            session['teacher_name'] = teacher['name']
+            session['user_token'] = auth_response.session.access_token
+            session['teacher_id'] = teacher_data.data['id']
+            session['teacher_name'] = teacher_data.data['name']
+            
             return redirect(url_for('teacher_dashboard'))
-        else:
-            flash('Invalid email or password. Please try again.', 'danger')
+
+        except Exception as e:
+            flash("Login failed. Check email/password or verify your account.", "danger")
             return redirect(url_for('teacher_login'))
 
     return render_template("teacher_login.html")
@@ -468,79 +509,78 @@ def admin_logout():
 
 @app.route("/admin/upload", methods=["POST"])
 def admin_upload_students():
+    # 1. Security Check
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
 
-    # ... (file and teacher_id checks are unchanged) ...
-    if 'file' not in request.files or request.files['file'].filename == '':
+    if 'file' not in request.files:
         flash('No file selected.', 'danger')
         return redirect(url_for('admin_dashboard'))
 
     teacher_id = request.form.get('teacher_id')
-    if not teacher_id:
-        flash('You must select a teacher to assign the students to.', 'danger')
-        return redirect(url_for('admin_dashboard'))
-
     file = request.files['file']
+
     if file and allowed_file(file.filename):
         try:
-            df = pd.read_excel(file)
-            required_cols = ['enrollment_no', 'password']
-            if not all(col in df.columns for col in required_cols):
-                flash(f'Error: Excel file must have columns: {", ".join(required_cols)}', 'danger')
-                return redirect(url_for('admin_dashboard'))
-
-            # --- NEW: Build a list of students to insert ---
-            students_to_insert = []
-            processed_count = 0
-            
-            for index, row in df.iterrows():
-                # ... (data extraction logic is unchanged) ...
-                enrollment_no_raw = str(row.get('enrollment_no', '')).strip()
-                password_value = row.get('password')
-                password_raw = ""
-                if pd.notna(password_value):
-                    try:
-                        password_raw = str(int(float(password_value)))
-                    except (ValueError, TypeError):
-                        password_raw = str(password_value).strip()
-
-                if not enrollment_no_raw or not password_raw:
-                    continue
-
-                hashed_password = generate_password_hash(password_raw)
-                processed_count += 1
-                
-                # --- NEW: Add student to our list instead of inserting ---
-                students_to_insert.append({
-                    'enrollment_no': enrollment_no_raw,
-                    'password_hash': hashed_password,
-                    'teacher_id': teacher_id
-                })
-            
-            # --- NEW: Insert all students in one batch ---
-            if students_to_insert:
-                # This single command replaces the entire try/except/commit/close block
-                response = supabase.table('students').insert(
-                    students_to_insert,
-                    on_conflict='enrollment_no',  # The column to check for duplicates
-                    ignore_duplicates=True  # This is the new 'except ...: pass'
-                ).execute()
-                
-                newly_added_count = len(response.data)
+            # 2. Read File
+            if file.filename.endswith('.csv'):
+                df = pd.read_csv(file)
             else:
-                newly_added_count = 0
+                df = pd.read_excel(file)
+            
+            # Clean column names
+            df.columns = df.columns.str.strip()
+            
+            success_count = 0
+            
+            # 3. Loop through EVERY student
+            for index, row in df.iterrows():
+                # Get enrollment and remove leading/trailing spaces
+                enrollment = str(row['enrollment_no']).strip()
+                
+                # --- PASSWORD LOGIC ---
+                raw_pass = row['password']
+                if pd.isna(raw_pass): continue 
 
-            flash(f'Success! Processed {processed_count} records. Added {newly_added_count} new students.', 'success')
-        
+                if isinstance(raw_pass, float):
+                    password = str(int(raw_pass))
+                else:
+                    password = str(raw_pass).strip()
+                
+                # Ensure password is at least 6 characters (Supabase requirement)
+                if len(password) < 6:
+                    password = password + "123"
+
+                # --- FIX: REMOVE SPACES FROM EMAIL ---
+                # "MITU23 BTCSD015" -> "MITU23BTCSD015@mit-university.edu"
+                safe_enrollment = enrollment.replace(" ", "")
+                email = f"{safe_enrollment}@mit-university.edu"
+
+                try:
+                    # Create User
+                    supabase.auth.admin.create_user({
+                        "email": email,
+                        "password": password,
+                        "email_confirm": True, # Auto-confirm
+                        "user_metadata": {
+                            "enrollment_no": enrollment, # Original ID (with space) kept here
+                            "role": "student",
+                            "teacher_id": teacher_id
+                        }
+                    })
+                    success_count += 1
+
+                except Exception as e:
+                    # Ignore "User already registered" errors
+                    if "User already registered" not in str(e):
+                        print(f"Failed on {enrollment}: {str(e)}")
+
+            flash(f"Success! Uploaded {success_count} students.", "success")
+
         except Exception as e:
-            flash(f'An unexpected error occurred: {e}', 'danger')
-    else:
-        flash('Invalid file type. Please upload an .xlsx file.', 'danger')
+            flash(f"File Error: {str(e)}", "danger")
     
     return redirect(url_for('admin_dashboard'))
-
-    """
 
 # --- CORRECTED STUDENT ROUTES FOR DEMO USER ---
 
@@ -566,24 +606,32 @@ def student_login():
             flash("Please enter both enrollment number and password.", "danger")
             return redirect(url_for('student_login'))
         
-        # --- NEW SUPABASE CODE ---
-        # Replaces get_db_connection, conn.execute, and conn.close
-        response = supabase.table('students').select('*').eq('enrollment_no', enrollment_no).limit(1).execute()
-        
-        student = None
-        if response.data:
-            student = response.data[0] # This is the new "fetchone()"
-        # --- END OF NEW CODE ---
+        try:
+            # 1. LOOKUP: Find the verified email for this enrollment number
+            response = supabase.table('students').select('email, id').eq('enrollment_no', enrollment_no).execute()
+            
+            if not response.data:
+                flash("Enrollment number not found or account not verified yet.", "danger")
+                return redirect(url_for('student_login'))
+            
+            student_email = response.data[0]['email']
+            student_id = response.data[0]['id']
 
-        # This logic is unchanged and now works with the 'student' from Supabase
-        if student and check_password_hash(student['password_hash'], password):
-            session['student_id'] = student['id']
-            session['enrollment_no'] = student['enrollment_no']
+            # 2. LOGIN: Authenticate with Supabase
+            auth_response = supabase.auth.sign_in_with_password({
+                "email": student_email,
+                "password": password
+            })
+
+            # 3. SUCCESS
+            session['user_token'] = auth_response.session.access_token
+            session['student_id'] = student_id
+            session['enrollment_no'] = enrollment_no
             return redirect(url_for('student_dashboard'))
-        else:
-            flash('Invalid enrollment number or password.', 'danger')
-        
-        return redirect(url_for('student_login'))
+
+        except Exception as e:
+            flash("Invalid credentials or account not verified.", "danger")
+            return redirect(url_for('student_login'))
 
     return render_template("student_login.html")
 
@@ -607,51 +655,143 @@ def student_register():
             flash("Passwords do not match!", "danger")
             return redirect(url_for("student_register"))
 
-        hashed_password = generate_password_hash(password)
-        
         # --- THIS IS THE KEY ---
         # 1. Go to your Supabase table for 'teachers'.
         # 2. Manually add a row called "Public Students".
         # 3. Get the 'id' for that row and paste it here.
         PUBLIC_TEACHER_ID = 7 # <-- CHANGE THIS ID
-
-        try:
-            response = supabase.table('students').insert({
-                "enrollment_no": enrollment_no,
-                "password_hash": hashed_password,
-                "email": email, # The email column we added for Google Auth
-                "teacher_id": PUBLIC_TEACHER_ID 
-            }).execute()
-
-            flash("Registration successful! You can now log in.", "success")
-            return redirect(url_for("student_login"))
         
+        try:
+            # This sends the OTP Email!
+            response = supabase.auth.sign_up({
+                "email": email,
+                "password": password,
+                "options": {
+                    "data": {
+                        "enrollment_no": enrollment_no,
+                        "role": "student",
+                        "teacher_id": PUBLIC_TEACHER_ID 
+                    }
+                }
+            })
+
+            if response.user:
+                # 1. Store email in session so the next page knows who to verify
+                session['email_to_verify'] = email
+                
+                # 2. Tell user to check for the code
+                flash(f"Verification code sent to {email}. Please enter it below.", "info")
+                
+                # 3. Redirect to the NEW OTP page instead of login
+                return redirect(url_for("verify_otp")) 
+            else:
+                flash("Registration failed. Please try again.", "danger")
+
         except Exception as e:
-            # This will catch if the email or enrollment_no is already taken
-            flash("Email or Enrollment Number is already registered.", "danger")
+            flash(f"Error: {str(e)}", "danger")
             return redirect(url_for("student_register"))
 
-    # Show the registration form
     return render_template("student_register.html")
+
+# --- NEW ROUTE FOR VERIFYING THE OTP ---
+@app.route("/verify_otp", methods=["GET", "POST"])
+def verify_otp():
+    # Retrieve the email we saved in the session during registration
+    email = session.get('email_to_verify')
+    
+    # If session expired or they skipped registration, send them back
+    if not email:
+        flash("Session expired. Please register again.", "warning")
+        return redirect(url_for('home'))
+
+    if request.method == "POST":
+        otp = request.form["otp"]
+        
+        try:
+            # 1. VERIFY THE CODE WITH SUPABASE AUTH
+            response = supabase.auth.verify_otp({
+                "email": email,
+                "token": otp,
+                "type": "signup"
+            })
+            
+            # If successful, we get a user session
+            if response.user:
+                session['user_token'] = response.session.access_token
+                
+                # CRITICAL FIX: Give the DB Trigger 2 seconds to finish creating the row
+                time.sleep(2) 
+
+                # 2. CHECK IF STUDENT (Using standard select for safety)
+                # We simply ask: "Give me any rows that match this email"
+                student_res = supabase.table('students').select('*').eq('email', email).execute()
+                
+                # Check if we got data back safely
+                if student_res and student_res.data and len(student_res.data) > 0:
+                    student = student_res.data[0] # Take the first row
+                    session['student_id'] = student['id']
+                    session['enrollment_no'] = student['enrollment_no']
+                    flash("Verification successful! Welcome, Student.", "success")
+                    return redirect(url_for('student_dashboard'))
+
+                # 3. CHECK IF TEACHER (Using standard select for safety)
+                teacher_res = supabase.table('teachers').select('*').eq('email', email).execute()
+
+                if teacher_res and teacher_res.data and len(teacher_res.data) > 0:
+                    teacher = teacher_res.data[0] # Take the first row
+                    session['teacher_id'] = teacher['id']
+                    session['teacher_name'] = teacher['name']
+                    flash("Verification successful! Welcome, Teacher.", "success")
+                    return redirect(url_for('teacher_dashboard'))
+
+                # 4. FALLBACK: Account Verified, but Profile Loading
+                # If the trigger is SUPER slow, we just ask them to log in manually.
+                flash("Account verified! Please log in to continue.", "info")
+                return redirect(url_for('teacher_login'))
+            
+        except Exception as e:
+            # This catches invalid OTPs or network errors
+            flash(f"Error during verification: {str(e)}", "danger")
+            return redirect(url_for("verify_otp"))
+
+    return render_template("verify_otp.html", email=email)
 
 @app.route("/student/dashboard")
 def student_dashboard():
     if 'student_id' not in session:
         return redirect(url_for('student_login'))
     
+    student_id = session['student_id']
     assessment_has_been_taken = False
-    # --- "testdrive" logic is unchanged ---
-    if session.get('student_id') == 0:
-        assessment_has_been_taken = 'test_user_scores' in session
-    else:
-        # --- NEW SUPABASE CODE ---
-        # Replaces get_db_connection, conn.execute, and conn.close
-        response = supabase.table('students').select('aq_score').eq('id', session['student_id']).limit(1).execute()
+    
+    # ... (Keep your existing testdrive logic here) ...
+
+    if student_id != 0: # Real user
+        # 1. Get Student Data
+        response = supabase.table('students').select('aq_score, career_suggestion').eq('id', student_id).single().execute()
+        student = response.data
         
-        if response.data:
-            student_data = response.data[0] # This is the new "fetchone()"
-            assessment_has_been_taken = student_data['aq_score'] is not None
-        # --- END OF NEW CODE ---
+        if student:
+            assessment_has_been_taken = student['aq_score'] is not None
+            
+            # --- THE MANDATORY LOCK LOGIC ---
+            # If they have a career suggestion (Report Generated)...
+            if student['career_suggestion']: 
+                # ...Check if they have given feedback yet
+                # --- FIX START: Check Session First! ---
+                # If they have the "passport" from just now, let them in.
+                if session.get('feedback_submitted_local'):
+                    pass # Allow access immediately
+                else:
+                    # Otherwise, check the database (for previous logins)
+                    fb_check = supabase.table('student_feedback').select('id').eq('student_id', student_id).execute()
+                    
+                    # If NO feedback found in DB, force redirect
+                    if not fb_check.data:
+                        flash("Please complete this quick feedback to unlock your dashboard.", "warning")
+                        return redirect(url_for('student_feedback_form'))
+                # --- FIX END --
+            # --------------------------------
 
     return render_template("student_dashboard.html", assessment_taken=assessment_has_been_taken)
 
@@ -668,7 +808,7 @@ def submit_assessment():
     if 'student_id' not in session:
         return redirect(url_for('student_login'))
 
-    # --- Score calculation is unchanged ---
+    # ... (Calculations stay the same) ...
     control_score = sum(int(request.form.get(f'q{i}', 0)) for i in range(1, 4))
     ownership_score = sum(int(request.form.get(f'q{i}', 0)) for i in range(4, 12))
     reach_score = sum(int(request.form.get(f'q{i}', 0)) for i in range(12, 17))
@@ -676,16 +816,9 @@ def submit_assessment():
     attitude_score = sum(int(request.form.get(f'q{i}', 0)) for i in [22, 23])
     total_aq_score = (control_score + ownership_score + reach_score + endurance_score + attitude_score) * 2
     
-    # --- "testdrive" logic is unchanged ---
-    if session.get('student_id') == 0:
-        session['test_user_scores'] = {
-            'control_score': control_score, 'ownership_score': ownership_score,
-            'reach_score': reach_score, 'endurance_score': endurance_score,
-            'attitude_score': attitude_score, 'total_aq_score': total_aq_score
-        }
-    else:
-        # --- NEW SUPABASE CODE ---
-        # Replaces get_db_connection, conn.execute, conn.commit, and conn.close
+    # ... (Testdrive logic stays the same) ...
+
+    if session.get('student_id') != 0:
         scores_to_update = {
             "aq_score": total_aq_score,
             "control_score": control_score,
@@ -695,8 +828,12 @@ def submit_assessment():
             "attitude_score": attitude_score
         }
         
+        # 1. Update Database
         response = supabase.table('students').update(scores_to_update).eq('id', session['student_id']).execute()
-        # --- END OF NEW CODE ---
+        
+        # 2. FIX: Save to Session so the next page finds it INSTANTLY
+        session['latest_scores'] = scores_to_update  # <--- FIX ADDED HERE
+        session.modified = True                      # <--- FIX ADDED HERE
 
     return redirect(url_for('show_assessment_results'))
 
@@ -706,6 +843,9 @@ def show_assessment_results():
         return redirect(url_for('student_login'))
 
     scores = None
+
+    if 'latest_scores' in session:
+        scores = session['latest_scores']
     # --- "testdrive" logic is unchanged ---
     if session.get('student_id') == 0:
         scores = session.get('test_user_scores')
@@ -723,8 +863,12 @@ def show_assessment_results():
             scores = response.data[0] 
         # --- END OF NEW CODE ---
 
-    if not scores:
-        flash("Could not retrieve assessment scores. Please take the assessment again.", "danger")
+    # --- CRITICAL FIX: Check for Missing/Null Scores ---
+    # The error happened because 'scores' existed (the student row exists), 
+    # but the actual values (like aq_score) were None/NULL.
+    # This check ensures we only proceed if we have actual numbers.
+    if not scores or scores.get('aq_score') is None:
+        flash("Could not retrieve assessment scores. Please take the assessment first.", "danger")
         return redirect(url_for('student_assessment'))
 
     # --- This part is unchanged ---
@@ -930,6 +1074,45 @@ def student_report(student_id=None):
         viewer_is_teacher=viewer_is_teacher  # Pass the new variable to the HTML
     )
 
+
+# --- ADD THIS TO app.py ---
+
+@app.route("/student/feedback_form", methods=["GET", "POST"])
+def student_feedback_form():
+    if 'student_id' not in session:
+        return redirect(url_for('student_login'))
+
+    # POST: Handle the form submission
+    if request.method == "POST":
+        accuracy = request.form.get("accuracy")
+        relevance = request.form.get("relevance")
+        agreement = request.form.get("agreement") == "yes" # Convert 'yes' string to Boolean
+        comments = request.form.get("comments")
+
+        try:
+            # Insert into Supabase
+            supabase.table('student_feedback').insert({
+                "student_id": session['student_id'],
+                "aq_accuracy_rating": int(accuracy),
+                "career_relevance_rating": int(relevance),
+                "top_trait_agreement": agreement,
+                "comments": comments
+            }).execute()
+
+            session['feedback_submitted_local'] = True # <--- NEW LINE ADDED HERE
+            session.modified = True
+
+            flash("Thank you! Your feedback helps improve our AI accuracy.", "success")
+            return redirect(url_for('student_dashboard'))
+            
+        except Exception as e:
+            flash(f"Error submitting feedback: {e}", "danger")
+            return redirect(url_for('student_feedback_form'))
+
+    # GET: Show the form
+    return render_template("student_feedback.html")
+
+
 @app.route("/student/logout")
 def student_logout():
     session.clear()
@@ -939,12 +1122,11 @@ def student_logout():
 
 
 
-"""
 # Renamed the old /teachers to avoid conflict with login
 @app.route("/teachers/info")
 def teachers_info():
     return "<h1>Teacher info coming soon</h1>"
-"""
+
 
 if __name__ == "__main__":
     

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Statistics - AD!QUATE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/info.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+<body>
+
+    <div class="info-container">
+        <header class="info-header">
+            <h1>Platform Impact</h1>
+            <p>Real-time statistics of our growing community.</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon-wrapper student-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="stat-details">
+                    <h2 class="counter">{{ stats.total_students }}</h2>
+                    <p>Students Enrolled</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon-wrapper assessment-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div class="stat-details">
+                    <h2 class="counter">{{ stats.assessments_completed }}</h2>
+                    <p>Assessments Taken</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="icon-wrapper teacher-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="stat-details">
+                    <h2 class="counter">{{ stats.total_teachers }}</h2>
+                    <p>Teachers Registered</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="research-container">
+            <h1>Design An Artificial Intelligence-Based Framework For Evaluating Adversity Quotient (AQ) In Higher Education</h1>
+            <p><strong>Presented By:</strong> Ms. Jyoti Gundesha Mudkanna (MITU21PHDT0012)<br>
+            <strong>Research Supervisor:</strong> Prof. Dr. Reena Pagare<br>
+            <strong>Department:</strong> Computer Science & Engineering, MIT School of Computing, MIT-ADT University, Pune.</p>
+
+            <h2>1. Introduction & Motivation</h2>
+            <p>The research focuses on a multidisciplinary approach linking Psychology, Education, and AI to foster cognitive and adversity skills. It explores the interdependence of teaching, learning, and evaluation in the educational process.</p>
+            <h3>Key Concepts</h3>
+            <ul>
+                <li><strong>Adaptability:</strong> The ability to adapt to changing environments (e.g., "Turning obstacles into opportunities").</li>
+                <li><strong>Assessment Types:</strong>
+                    <ul>
+                        <li><em>Assessment for Learning:</em> Ongoing and actionable.</li>
+                        <li><em>Assessment of Learning:</em> Grade-based.</li>
+                        <li><em>Assessment as Learning:</em> Actively involves students.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>2. Problem Statement</h2>
+            <p>"Develop a framework or methodology to evaluate and guide students’ career decisions in higher education, integrating the Adversity Quotient with a structured assessment scheme."</p>
+
+            <h2>3. Adversity Quotient (AQ) Models</h2>
+            <p>AQ is a measure of how one responds to adversity. It is a scientifically grounded set of tools for improving response to challenges.</p>
+            <h3>CO2REA Model</h3>
+            <ul>
+                <li><strong>Control:</strong> Extent to which an individual realizes they can manage a challenging situation.</li>
+                <li><strong>Ownership:</strong> Extent to which the individual acknowledges the causes and consequences of challenges.</li>
+                <li><strong>Origin:</strong> Degree of owning the outcomes of adversity.</li>
+                <li><strong>Reach:</strong> Ability to ensure adversities do not affect other parts of essential being (health, performance, etc.).</li>
+                <li><strong>Endurance:</strong> Ability to withstand the challenge and its duration.</li>
+                <li><strong>Attitude:</strong> The constructive mindset and judgment used to respond to challenges.</li>
+            </ul>
+
+            <h2>4. Methodology of Research</h2>
+            <p>The system follows a structured pipeline:</p>
+            <ol>
+                <li><strong>Data Acquisition:</strong> Collecting constructed-response items and utilizing specific rubrics.</li>
+                <li><strong>Data Pre-processing:</strong> Noise removal and data normalization.</li>
+                <li><strong>Assessment with Neural Network:</strong> Generating classes based on Scholastic and Life Skills.</li>
+                <li><strong>Evaluation:</strong> Collecting results from the NN and teacher’s evaluation (Training Phase).</li>
+                <li><strong>Decision Making:</strong> Finding out the AQ of the individual student (Testing Phase).</li>
+            </ol>
+
+            <h2>5. Project Objectives</h2>
+            <ul>
+                <li><strong>Objective 1:</strong> Conduct assessments and collect constructed-response items at the institution to aid analyses. (Includes Data Collection and Instrument Preparation like ARP-IHEI).</li>
+                <li><strong>Objective 2:</strong> To relate Adversity Quotient and Item Response Theory in Indian Higher Education using CFA and EFA analysis.</li>
+                <li><strong>Objective 3:</strong> To outline the Adversity Quotient and calculate AQ based on assessments.</li>
+                <li><strong>Objective 4:</strong> To establish a novel relationship between AQ and students’ career decision-making using Bloom’s Taxonomy.</li>
+                <li><strong>Objective 5:</strong> To validate and compare the proposed model with existing systems.</li>
+            </ul>
+
+            <h2>6. Bloom’s Taxonomy & AI Integration</h2>
+            <p>The framework maps AQ traits to Bloom's Taxonomy levels to identify cognitive and affective domains.</p>
+            <table class="research-table">
+                <thead>
+                    <tr>
+                        <th>AQ Dimension</th>
+                        <th>Bloom’s Taxonomy Level</th>
+                        <th>Skill Based Assessment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Control</td><td>Remembering</td><td>Memory</td></tr>
+                    <tr><td>Origin + Ownership</td><td>Understanding</td><td>Mental model, inference</td></tr>
+                    <tr><td>Reach</td><td>Applying</td><td>Solution-finding, Critical thinking</td></tr>
+                    <tr><td>Endurance</td><td>Analyzing</td><td>Reasoning</td></tr>
+                    <tr><td>Attitude</td><td>Evaluating/Creating</td><td>Judgment, Novelty</td></tr>
+                </tbody>
+            </table>
+
+            <h2>7. Technical Implementation</h2>
+            <p>The system utilizes advanced Deep Learning models:</p>
+            <ul>
+                <li><strong>BERT (Bidirectional Encoder Representations from Transformers):</strong> Used for question classification and semantic understanding.</li>
+                <li><strong>Bi-GRU (Bidirectional Gated Recurrent Unit):</strong> An advanced version of LSTM, less complex with higher accuracy.</li>
+                <li><strong>Cosine Similarity & S-BERT:</strong> Applied for multilabel classification to map questions to Bloom's levels.</li>
+            </ul>
+
+            <h2>8. Expected Outcomes</h2>
+            <ul>
+                <li>Extraction of features required for Formative assessment.</li>
+                <li>Generation of a comprehensive dataset.</li>
+                <li>Designing the most suitable ARP instrument for finding adversity.</li>
+                <li>Designing a Framework that recommends a career for a student.</li>
+            </ul>
+
+            <h2>9. Publications & Achievements</h2>
+            <ul>
+                <li>Dataset published on IEEE Dataport (20th June 2024).</li>
+                <li>Paper titled ‘Revolutionizing Academic Evaluation: Bloom’s Taxonomy Meets Deep Learning and NLP’ published in IEEE EDUCON 2025, London UK.</li>
+                <li>Chapter published in "Data Science & Exploration in Artificial Intelligence" (2025).</li>
+            </ul>
+        </div>
+
+        <div class="action-area">
+            <a href="{{ url_for('home') }}" class="btn-home">Back to Home</a>
+        </div>
+    </div>
+
+</body>
+</html>

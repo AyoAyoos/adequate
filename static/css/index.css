@@ -21,6 +21,7 @@ body {
     color: var(--text-primary);
     display: grid;
     place-items: center;
+    
     overflow: hidden;
     opacity: 0; /* Start every page invisible */
     transition: opacity 0.5s ease-out;

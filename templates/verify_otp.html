@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .otp-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        h2 { color: #333; }
+        p { color: #666; font-size: 0.95rem; }
+        .email-highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover { background-color: #0056b3; }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .alert.info { background-color: #d1ecf1; color: #0c5460; }
+        .alert.danger { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="otp-container">
+        <h2>Verify Account</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <p>Please enter the verification code sent to:</p>
+        <p class="email-highlight">{{ email }}</p>
+
+        <form action="{{ url_for('verify_otp') }}" method="POST">
+            <input type="text" name="otp" placeholder="123456" required maxlength="6">
+            <button type="submit">Verify Code</button>
+        </form>
+    </div>
+
+</body>
+</html>

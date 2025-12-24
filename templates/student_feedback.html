@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feedback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feedback.css') }}">
+</head>
+<body>
+
+    <div class="feedback-container">
+        <h2>We value your opinion!</h2>
+        <p>Please provide feedback on your assessment results to help us improve.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="alert {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('student_feedback_form') }}" method="POST">
+            
+            <div class="form-group">
+                <label for="accuracy">How accurate do you feel the AQ Score was? (1-5)</label>
+                <div class="rating-select">
+                    <select name="accuracy" id="accuracy" required>
+                        <option value="" disabled selected>Select Rating</option>
+                        <option value="5">5 - Very Accurate</option>
+                        <option value="4">4 - Mostly Accurate</option>
+                        <option value="3">3 - Neutral</option>
+                        <option value="2">2 - Somewhat Inaccurate</option>
+                        <option value="1">1 - Not Accurate</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="relevance">How relevant were the career suggestions? (1-5)</label>
+                <div class="rating-select">
+                    <select name="relevance" id="relevance" required>
+                        <option value="" disabled selected>Select Rating</option>
+                        <option value="5">5 - Highly Relevant</option>
+                        <option value="4">4 - Relevant</option>
+                        <option value="3">3 - Neutral</option>
+                        <option value="2">2 - Somewhat Irrelevant</option>
+                        <option value="1">1 - Not Relevant</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Do you agree with your Top Traits?</label>
+                <div class="radio-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="agreement" value="yes" required> Yes
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="agreement" value="no"> No
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Additional Comments (Optional):</label>
+                <textarea name="comments" id="comments" rows="4" placeholder="Tell us more about your experience..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+        </form>
+    </div>
+
+</body>
+</html>

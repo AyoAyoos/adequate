@@ -3,85 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AD!QUATE</title>
+    <title>AD!QUATE - Portal Login</title>
     
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
-    <!-- Linking External CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/transition.css') }}">
 </head>
 <body>
 
-    <!-- Animated liquid background shapes -->
-    <div class="background-shapes">
+    <div class="background-shapes" aria-hidden="true">
         <div class="shape shape1"></div>
         <div class="shape shape2"></div>
     </div>
 
-    <!-- Main Content Container -->
-    <div class="container">
+    <main class="container">
         
-        <!-- Main Login Panel -->
-        <div class="glass-panel panel-main">
-            <div class="logo">
-                <img src="{{ url_for('static', filename='images/logo5.png') }}" alt="AD!QUATE Logo" class="logo-image">
-            </div>
+        <section class="glass-panel panel-main">
+            <header class="logo">
+                <img src="{{ url_for('static', filename='images/adiquate.png') }}" 
+                     alt="AD!QUATE Logo" 
+                     class="logo-image" 
+                     style="width: 260px; max-width: 100%; height: auto;">
+            </header>
             
-            
-            
-        <div class="buttons">
-    <!-- Admin button is now first and is the primary button -->
-    
-        <a class="btn btn-primary" style="opacity: 0.6; cursor: not-allowed;">
+            <nav class="buttons" aria-label="User Portals">
+                <a href="{{ url_for('admin_login') }}" class="btn btn-primary" style="opacity: 0.9;">
             <i class="fas fa-user-shield"></i>
             Admin
         </a>
     
-        <a class="btn btn-secondary" style="opacity: 0.6; cursor: not-allowed;">
+                <a href="{{ url_for('teacher_login') }}" class="btn btn-secondary" style="opacity: 0.8;">
             <i class="fas fa-chalkboard-teacher"></i>
             Teacher Portal
         </a>
 
-
-    <!-- Student button is last -->
     <a href="{{ url_for('student_login') }}" class="btn btn-secondary">
         <i class="fas fa-user-graduate"></i>
         Student Portal
     </a>
-</div>
-        </div>
+            </nav>
+        </section>
         
-        <!-- Features Panel -->
-        <div class="glass-panel panel-features">
+        <section class="glass-panel panel-features">
             <div class="features">
                 <div class="feature">
                     <i class="fas fa-brain"></i>
-                    <span>AI-Powered Question Analysis</span>
+                    <span>AI Analysis</span>
                 </div>
                 <div class="feature">
                     <i class="fas fa-chart-line"></i>
-                    <span>Real-time Progress</span>
+                    <span>Real-time Stats</span>
                 </div>
                 <div class="feature">
                     <i class="fas fa-clipboard-check"></i>
-                    <span>Smart Assessments</span>
+                    <span>Smart Tests</span>
                 </div>
             </div>
-        </div>
+        </section>
 
-    </div>
+        <footer style="margin-top: 10px;">
+            <a href="{{ url_for('info') }}" class="btn btn-secondary" style="padding: 10px 20px; font-size: 14px; opacity: 0.7;">
+                <i class="fas fa-arrow-left"></i> Back to Info
+            </a>
+        </footer>
+
+    </main>
     
-    <!-- Linking External JavaScript -->
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <script src="{{ url_for('static', filename='js/transition.js') }}" defer></script>
 
 </body>
 </html>
-

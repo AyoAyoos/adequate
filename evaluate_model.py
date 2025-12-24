@@ -5,18 +5,21 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from itertools import cycle
 
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc, multilabel_confusion_matrix
 from sklearn.preprocessing import label_binarize
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.utils.data import DataLoader, TensorDataset, SequentialSampler
 
 # --- 1. CONFIGURATION ---
 MODEL_PATH = 'content/bloom_bert_model'
-# Use forward slashes for cross-platform compatibility
 TEST_DATA_PATH = 'D:/new_hopes/Blooms_Phase_4/Model/bloom_dataset.csv'
 BATCH_SIZE = 16
-# Define your class names here for easy access in plots
-CLASS_NAMES = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6']
+
+# UPDATE: I changed these to match your reference image. 
+# If your dataset uses 'L1', 'L2', keep the old list, but this makes the table look like your image.
+CLASS_NAMES = ['Knowledge', 'Comprehension', 'Application', 'Analysis', 'Synthesis', 'Evaluation']
+# OR keep your original: CLASS_NAMES = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6']
+
 N_CLASSES = len(CLASS_NAMES)
 
 # --- 2. GPU / DEVICE SETUP ---
@@ -28,25 +31,21 @@ print(f"Loading model from {MODEL_PATH}")
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 model.to(DEVICE)
-model.eval()  # Set the model to evaluation mode
+model.eval()
 
 # --- 4. PREPARE YOUR TEST DATA ---
 print(f"Loading and tokenizing test data from {TEST_DATA_PATH}")
 df_test = pd.read_csv(TEST_DATA_PATH)
 
-# Use the correct column name 'question'
 test_texts = df_test['question'].tolist()
 
-# Convert string labels ('L1', 'L2', etc.) to integers (0, 1, etc.)
-label_map = {name: i for i, name in enumerate(CLASS_NAMES)}
+# Map labels based on your dataset's format. 
+# If your CSV has 'L1', map it to 0. If it has 'Knowledge', map it to 0.
+# Ensure this matches the order of CLASS_NAMES above.
+unique_labels = sorted(df_test['label'].unique()) 
+label_map = {name: i for i, name in enumerate(unique_labels)} 
 true_labels = df_test['label'].map(label_map).tolist()
 
-if any(label is None for label in true_labels):
-    raise ValueError("ERROR: One or more labels in your CSV could not be found in the label_map.")
-else:
-    print("Successfully converted all labels to numbers.")
-
-# Tokenize all sentences and map tokens to their word IDs.
 input_ids, attention_masks = [], []
 for text in test_texts:
     encoded_dict = tokenizer.encode_plus(
@@ -61,11 +60,10 @@ input_ids = torch.cat(input_ids, dim=0)
 attention_masks = torch.cat(attention_masks, dim=0)
 labels = torch.tensor(true_labels)
 
-# Create the DataLoader.
 test_dataset = TensorDataset(input_ids, attention_masks, labels)
 test_dataloader = DataLoader(test_dataset, sampler=SequentialSampler(test_dataset), batch_size=BATCH_SIZE)
 
-# --- 5. MAKE PREDICTIONS & GET PROBABILITIES ---
+# --- 5. MAKE PREDICTIONS ---
 print("Making predictions on the test set...")
 all_predictions = []
 all_probs = []
@@ -74,8 +72,6 @@ with torch.no_grad():
         batch_input_ids, batch_attention_mask = batch[0].to(DEVICE), batch[1].to(DEVICE)
         outputs = model(batch_input_ids, attention_mask=batch_attention_mask)
         logits = outputs.logits
-        
-        # Store predictions
         predictions = torch.argmax(logits, dim=1).flatten()
         all_predictions.extend(predictions.cpu().numpy())
         
