@@ -4,66 +4,145 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- Root Variables (Matched to index.css) --- */
+        :root {
+            --primary-blue: #007aff;
+            --light-blue: #5ac8fa;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(235, 235, 245, 0.7);
+            --glass-bg: rgba(40, 40, 60, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --soft-shadow: rgba(0, 0, 0, 0.25);
+        }
+
+        /* --- Layout & Background --- */
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #e9ecef;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+            min-height: 100vh;
+            background: #1d2b3a;
+            color: var(--text-primary);
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            position: relative;
         }
-        .otp-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 350px;
+
+        /* --- Animated Liquid Background (Copy from index.css) --- */
+        .background-shapes {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.7;
+        }
+        .shape1 {
+            width: 400px; height: 400px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            top: -100px; left: -150px;
+            animation: move 20s infinite alternate ease-in-out;
+        }
+        .shape2 {
+            width: 500px; height: 500px;
+            background: linear-gradient(135deg, var(--light-blue), #9b59b6);
+            bottom: -150px; right: -200px;
+            animation: move 25s infinite alternate-reverse ease-in-out;
+        }
+        @keyframes move {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(100px, 50px) rotate(180deg); }
+        }
+
+        /* --- Glass Panel --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: 0 8px 32px 0 var(--soft-shadow);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
+            z-index: 1;
+            box-sizing: border-box;
+            animation: float-in 0.8s ease-out forwards;
         }
-        h2 { color: #333; }
-        p { color: #666; font-size: 0.95rem; }
-        .email-highlight {
-            font-weight: bold;
-            color: #007bff;
+        @keyframes float-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        h2 { font-size: 28px; font-weight: 700; margin: 0; }
+        .subtitle { color: var(--text-secondary); margin: 15px 0 25px; font-size: 15px; }
+        .email-highlight { color: var(--light-blue); font-weight: 600; }
+
+        /* --- 8-Digit Input Styling --- */
         input[type="text"] {
             width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 1.2rem;
-            letter-spacing: 5px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
+            padding: 16px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 16px;
             color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
+            font-size: 1.5rem;
+            letter-spacing: 6px; /* Spacing for 8 digits */
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: var(--light-blue);
+        }
+
+        /* --- Button (Matched to btn-primary in index.css) --- */
+        .btn-verify {
+            width: 100%;
+            padding: 14px;
+            background: var(--glass-bg);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
         }
-        button:hover { background-color: #0056b3; }
+        .btn-verify:hover {
+            background: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px 8px rgba(0, 122, 255, 0.6);
+        }
+
+        /* --- Alerts --- */
         .alert {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            font-size: 0.9rem;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
-        .alert.info { background-color: #d1ecf1; color: #0c5460; }
-        .alert.danger { background-color: #f8d7da; color: #721c24; }
+        .alert.danger { background: rgba(255, 59, 48, 0.2); border: 1px solid #ff3b30; color: #ff9f9a; }
+        .alert.info { background: rgba(0, 122, 255, 0.2); border: 1px solid var(--primary-blue); color: var(--light-blue); }
     </style>
 </head>
 <body>
 
-    <div class="otp-container">
+    <div class="background-shapes">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+    </div>
+
+    <div class="glass-panel">
         <h2>Verify Account</h2>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -74,12 +153,13 @@
           {% endif %}
         {% endwith %}
 
-        <p>Please enter the verification code sent to:</p>
-        <p class="email-highlight">{{ email }}</p>
+        <p class="subtitle">Enter the 8-digit code sent to:<br>
+           <span class="email-highlight">{{ email }}</span>
+        </p>
 
         <form action="{{ url_for('verify_otp') }}" method="POST">
-            <input type="text" name="otp" placeholder="123456" required maxlength="6">
-            <button type="submit">Verify Code</button>
+            <input type="text" name="otp" placeholder="00000000" required maxlength="8" pattern="\d{8}" title="Please enter exactly 8 digits">
+            <button type="submit" class="btn-verify">Verify Code</button>
         </form>
     </div>
 

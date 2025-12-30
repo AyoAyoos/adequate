@@ -1076,40 +1076,41 @@ def student_report(student_id=None):
 
 
 # --- ADD THIS TO app.py ---
+# In app.py
 
 @app.route("/student/feedback_form", methods=["GET", "POST"])
 def student_feedback_form():
     if 'student_id' not in session:
         return redirect(url_for('student_login'))
 
-    # POST: Handle the form submission
     if request.method == "POST":
         accuracy = request.form.get("accuracy")
         relevance = request.form.get("relevance")
-        agreement = request.form.get("agreement") == "yes" # Convert 'yes' string to Boolean
+        agreement = request.form.get("agreement") == "yes"
         comments = request.form.get("comments")
 
         try:
-            # Insert into Supabase
+            # Use the existing supabase client (Service Key) which bypasses RLS
+            # This is safe because we've already validated the student_id in session
             supabase.table('student_feedback').insert({
-                "student_id": session['student_id'],
+                "student_id": int(session['student_id']),
                 "aq_accuracy_rating": int(accuracy),
                 "career_relevance_rating": int(relevance),
                 "top_trait_agreement": agreement,
                 "comments": comments
             }).execute()
 
-            session['feedback_submitted_local'] = True # <--- NEW LINE ADDED HERE
+            session['feedback_submitted_local'] = True
             session.modified = True
 
-            flash("Thank you! Your feedback helps improve our AI accuracy.", "success")
+            flash("Thank you! Feedback submitted.", "success")
             return redirect(url_for('student_dashboard'))
             
         except Exception as e:
-            flash(f"Error submitting feedback: {e}", "danger")
+            print(f"Feedback Error: {e}")
+            flash(f"Error: {e}", "danger")
             return redirect(url_for('student_feedback_form'))
 
-    # GET: Show the form
     return render_template("student_feedback.html")
 
 
