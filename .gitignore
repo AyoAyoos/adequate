@@ -38,3 +38,9 @@ batch_processor.py
 
 Model/
 content/
+
+# BERT training artifacts (large binaries)
+Bert_model/bloom_results/
+Bert_model/bloom_augmented_results/
+Bert_model/final_bloom_bert/model.safetensors
+Bert_model/final_bloom_bert_augmented/model.safetensors
